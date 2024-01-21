@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>FitNexus - Admin</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="assets/favicon/Fitzky Browser Logo.png">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <link rel="stylesheet" type="text/css" href="assets/main.css">
+  <style>
+    /*.swal-wide{*/
+    /*  zoom: 85% !important;;*/
+    /*  !*width:850px !important;*!*/
+    /*}*/
+    .search-field{
+      width: 168% !important;
+    }
+    .screen{
+      zoom: 85% !important;
+    }
+    .btn_size{
+      zoom: 93% !important;
+    }
+    .sidebarLayout{
+      zoom: 90%;
+    }
+    @media only screen
+    and (min-device-width : 100px)
+    and (max-device-width : 768px){
+      #body { display: none;
+      }
+    }
+    @media only screen
+    and (min-device-width : 1024px){
+      #res { display: none;
+      }
+    }
+    .splash {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: black;
+    }
+
+    .spinner {
+      margin: 20px auto;
+      width: 50px;
+      height: 40px;
+      text-align: center;
+      font-size: 10px;
+
+    }
+
+    .spinner > div {
+      background-color: white;
+      height: 100%;
+      width: 6px;
+      display: inline-block;
+
+      -webkit-animation: sk-stretchdelay 1.2s infinite ease-in-out;
+      animation: sk-stretchdelay 1.2s infinite ease-in-out;
+    }
+
+    .spinner .rect2 {
+      -webkit-animation-delay: -1.1s;
+      animation-delay: -1.1s;
+    }
+
+    .spinner .rect3 {
+      -webkit-animation-delay: -1.0s;
+      animation-delay: -1.0s;
+    }
+
+    .spinner .rect4 {
+      -webkit-animation-delay: -0.9s;
+      animation-delay: -0.9s;
+    }
+
+    .spinner .rect5 {
+      -webkit-animation-delay: -0.8s;
+      animation-delay: -0.8s;
+    }
+
+    @-webkit-keyframes sk-stretchdelay {
+      0%, 40%, 100% { -webkit-transform: scaleY(0.4) }
+      20% { -webkit-transform: scaleY(1.0) }
+    }
+
+    @keyframes sk-stretchdelay {
+      0%, 40%, 100% {
+        transform: scaleY(0.4);
+        -webkit-transform: scaleY(0.4);
+      }  20% {
+           transform: scaleY(1.0);
+           -webkit-transform: scaleY(1.0);
+         }
+    }
+
+
+    .center {
+      display: block;
+      width: 100%;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .logo {
+      width: 81px;
+      margin: -24px auto;
+    }
+
+    #splash-screen {
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: black;
+      z-index: 99999;
+      pointer-events: none;
+    }
+  </style>
+  <script>
+    // window.onbeforeunload = function (e) {
+    //   e = e || window.event;
+    //
+    //   // For IE and Firefox prior to version 4
+    //   if (e) {
+    //     e.returnValue = 'Sure?';
+    //   }
+    //
+    //   // For Safari
+    //   return 'Sure?';
+    // };
+  </script>
+</head>
+<body>
+<div class="app-wrapper bg-secondary" id="res">
+  <div class="app-main">
+    <div class="app-content p-0">
+      <div class="app-inner-content-layout--main">
+        <div class="flex-grow-1 w-100 d-flex align-items-center">
+          <div class="bg-composed-wrapper--content">
+            <div class="hero-wrapper bg-composed-wrapper min-vh-100">
+              <div class="flex-grow-1 w-100 d-flex align-items-center">
+                <div class="col-lg-6 col-md-9 px-4 mx-auto text-center text-black">
+                  <img src="assets/images/illustrations/monitor.svg" class="w-50 mx-auto d-block my-5 img-fluid" >
+
+                  <h2 class="font-weight-bold">
+                    Unsupported Screen Resolution
+                  </h2>
+                  <p class="font-size-xxl line-height-sm font-weight-light d-block text-black-50">
+                    This device resolution is not supported...!
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<app-root id="body">
+  <div id="splash-screen">
+
+    <div class="center">
+
+      <div class="logo">
+        <img width="110" style="border-radius: 10px;height: 81px;width: 81px;" src="assets/images/white-logo.svg" alt="">
+      </div>
+
+      <div class="splash">
+        <div class="spinner">
+          <div class="rect1"></div>
+          <div class="rect2"></div>
+          <div class="rect3"></div>
+          <div class="rect4"></div>
+          <div class="rect5"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</app-root>
+</body>
+</html>
