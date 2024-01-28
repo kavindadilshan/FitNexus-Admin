@@ -1,0 +1,99 @@
+<app-page-title titleHeading='Dashboard'></app-page-title>
+<div class="row screen">
+  <div *ngIf="userRole === 'ROLE_SUPER_ADMIN'" class="col-xl-3 col-md-6">
+    <div [routerLink]="'/business-profile'" class="card card-box border-0 card-shadow-first p-4 mb-5 mouse-hover">
+      <div class="d-flex align-items-center">
+        <div class="d-40 rounded-circle bg-grow-early text-white text-center font-size-lg mr-3">
+          <i class="pe-7s-id"></i>
+        </div>
+        <div class="text-black-50">
+          Profiles
+        </div>
+      </div>
+      <div class="display-3 text-center line-height-sm text-second text-center d-flex align-items-center pt-3 justify-content-center">
+        <div [countUp]="profileCount" class="display-2 font-weight-bold"></div>
+      </div>
+      <div class="text-black-50 text-center opacity-6 pt-3">
+        <b>Total Business Profiles</b>
+      </div>
+    </div>
+  </div>
+
+  <div  class="col-xl-3 col-md-6">
+    <div [routerLink]="'/public-user-profile'" class="card card-box border-0 card-shadow-primary p-4 mb-5 mouse-hover">
+      <div class="d-flex align-items-center">
+        <div class="d-40 rounded-circle bg-happy-green text-white text-center font-size-lg mr-3">
+          <fa-icon [icon]="['far', 'user']"></fa-icon>
+        </div>
+        <div class="text-black-50">
+          Users
+        </div>
+      </div>
+      <div class="display-3 text-center line-height-sm text-second text-center d-flex align-items-center pt-3 justify-content-center">
+        <div [countUp]="usersCount" class="display-2 font-weight-bold"></div>
+      </div>
+      <div class="text-black-50 text-center opacity-6 pt-3">
+        <b>Total Public Users</b>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-xl-3 col-md-6">
+    <div [routerLink]="'/trainer-profile'" class="card card-box border-0 card-shadow-primary p-4 mb-5 mouse-hover">
+      <div class="d-flex align-items-center">
+        <div class="d-40 rounded-circle bg-asteroid text-white text-center font-size-lg mr-3">
+          <i class="pe-7s-users"></i>
+        </div>
+        <div class="text-black-50">
+          Class Trainers
+        </div>
+      </div>
+      <div class="display-3 text-center line-height-sm text-second text-center d-flex align-items-center pt-3 justify-content-center">
+        <div [countUp]="classTrainerCount" class="display-2 font-weight-bold"></div>
+      </div>
+      <div class="text-black-50 text-center opacity-6 pt-3">
+        <b>Total Class Trainers</b>
+      </div>
+    </div>
+  </div>
+
+  <div  class="col-xl-3 col-md-6">
+    <div [routerLink]="'/physical-classes'" class="card card-box border-0 card-shadow-primary p-4 mb-5 mouse-hover">
+      <div class="d-flex align-items-center">
+        <div class="d-40 rounded-circle bg-royal text-white text-center font-size-lg mr-3">
+          <i class="pe-7s-clock"></i>
+        </div>
+        <div class="text-black-50">
+          Fitness Class Sessions
+        </div>
+      </div>
+      <div class="display-3 text-center line-height-sm text-second text-center d-flex align-items-center pt-3 justify-content-center">
+        <div [countUp]="fitnessClassSessionCount" class="display-2 font-weight-bold"></div>
+      </div>
+      <div class="text-black-50 text-center opacity-6 pt-3">
+        <b>Total Fitness Class Sessions</b>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-3 col-md-6">
+    <div [routerLink]="'/gyms'" class="card card-box border-0 card-shadow-primary p-4 mb-5 mouse-hover">
+      <div class="d-flex align-items-center">
+        <div class="d-40 rounded-circle bg-sunrise-purple text-white text-center font-size-lg mr-3">
+          <i class="pe-7s-gym"></i>
+        </div>
+        <div class="text-black-50">
+          Gyms
+        </div>
+      </div>
+      <div class="display-3 text-center line-height-sm text-second text-center d-flex align-items-center pt-3 justify-content-center">
+        <div [countUp]="gymCount" class="display-2 font-weight-bold"></div>
+      </div>
+      <div class="text-black-50 text-center opacity-6 pt-3">
+        <b>Total Gyms</b>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
