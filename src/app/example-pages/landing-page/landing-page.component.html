@@ -1,0 +1,809 @@
+<div class="hero-wrapper bg-composed-wrapper bg-white">
+    <div class="header-nav-wrapper header-nav-wrapper-lg w-100 navbar-dark">
+        <div class="container">
+            <div class="header-nav-logo">
+                <div class="nav-logo">
+                    <a  routerLinkActive="active" title="Bamburgh Angular Admin Dashboard with NGX Bootstrap PRO">
+                        <i>
+                            <img alt="Bamburgh Angular Admin Dashboard with NGX Bootstrap PRO" src="assets/images/angular.svg">
+                        </i>
+                        <span>Bamburgh</span>
+                    </a>
+                </div>
+            </div>
+            <div class="header-nav-menu d-none d-lg-block">
+                <ul class="nav justify-content-center">
+                    <li class="nav-item">
+                        <a [routerLink]="['/dashboard-default']" class="nav-link">Dashboards</a>
+                    </li>
+                    <li class="nav-item">
+                        <a [routerLink]="['/applications-chat']" class="nav-link">Apps</a>
+                    </li>
+                    <li class="nav-item">
+                        <a [routerLink]="['/cards-3']" class="nav-link">Cards</a>
+                    </li>
+                    <li class="nav-item">
+                        <a [routerLink]="['/regular-tables-2']" class="nav-link">Tables</a>
+                    </li>
+                    <li class="nav-item">
+                        <a [routerLink]="['/forms-wizard']" class="nav-link">Forms</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="header-nav-actions flex-grow-0 flex-lg-grow-1">
+                <span class="d-none d-lg-block">
+                    <a [routerLink]="['/dashboard-default']" class="btn btn-pill btn-second">
+                        View Live Demo
+                    </a>
+                </span>
+                <span class="d-block d-lg-none">
+                    <button (click)="isCollapsed = !isCollapsed" [attr.aria-expanded]="!isCollapsed" [ngClass]="{'collapsed': isCollapsed}" aria-controls="nav-inner-header-1" class="navbar-toggler is-active hamburger hamburger--elastic" type="button">
+                        <span class="hamburger-box">
+                            <span class="hamburger-inner"></span>
+                        </span>
+                    </button>
+                </span>
+            </div>
+            <div [collapse]="isCollapsed" class="nav-collapsed-wrapper navbar-collapse collapse">
+                <div class="navbar-collapse-inner p-0">
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item bg-secondary p-2">
+                            <div class="d-flex align-items-stretch navbar-light align-content-center">
+                                <div class="header-nav-logo justify-content-start">
+                                    <a  class="navbar-brand d-flex d-40" title="Bamburgh Angular Admin Dashboard with NGX Bootstrap PRO">
+                                        <img alt="Bamburgh Angular Admin Dashboard with NGX Bootstrap PRO" class="d-block img-fluid" src="assets/images/angular.svg">
+                                    </a>
+                                </div>
+                                <button (click)="isCollapsed = !isCollapsed" [attr.aria-expanded]="!isCollapsed" [ngClass]="{'collapsed': isCollapsed}" aria-controls="nav-inner-header-1" class="navbar-toggler is-active hamburger hamburger--elastic" type="button">
+                                    <span class="hamburger-box">
+                                        <span class="hamburger-inner"></span>
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="list-group-item p-2">
+                            <a [routerLink]="['/dashboard-default']" class="d-flex px-2 align-items-center dropdown-item rounded">
+                                <div class="align-box-row w-100">
+                                    <div class="mr-3">
+                                        <div class="bg-deep-blue text-center text-white d-40 rounded-circle">
+                                            <fa-icon [icon]="['far', 'object-group']"></fa-icon>
+                                        </div>
+                                    </div>
+                                    <div class="text-truncate max-w-70 overflow-hidden">
+                                        <div class="font-weight-bold text-primary d-block">Dashboards</div>
+                                        <span class="text-black-50">
+                                            12 different dashboards to choose from
+                                        </span>
+                                    </div>
+                                    <div class="ml-auto card-hover-indicator align-self-center">
+                                        <fa-icon [icon]="['fas', 'chevron-right']" class="font-size-lg"></fa-icon>
+                                    </div>
+                                </div>
+                            </a>
+                            <a [routerLink]="['/applications-chat']" class="d-flex px-2 align-items-center dropdown-item rounded">
+                                <div class="align-box-row w-100">
+                                    <div class="mr-3">
+                                        <div class="bg-strong-bliss text-center text-white d-40 rounded-circle">
+                                            <fa-icon [icon]="['fas', 'sitemap']"></fa-icon>
+                                        </div>
+                                    </div>
+                                    <div class="text-truncate max-w-70 overflow-hidden">
+                                        <div class="font-weight-bold text-primary d-block">Apps</div>
+                                        <span class="text-black-50">
+                                            Multiple application designs included
+                                        </span>
+                                    </div>
+                                    <div class="ml-auto card-hover-indicator align-self-center">
+                                        <fa-icon [icon]="['fas', 'chevron-right']" class="font-size-lg"></fa-icon>
+                                    </div>
+                                </div>
+                            </a>
+                            <a [routerLink]="['/cards-3']" class="d-flex px-2 align-items-center dropdown-item rounded">
+                                <div class="align-box-row w-100">
+                                    <div class="mr-3">
+                                        <div class="bg-arielle-smile text-center text-white d-40 rounded-circle">
+                                            <fa-icon [icon]="['fas', 'shapes']"></fa-icon>
+                                        </div>
+                                    </div>
+                                    <div class="text-truncate max-w-70 overflow-hidden">
+                                        <div class="font-weight-bold text-primary d-block">Cards</div>
+                                        <span class="text-black-50">
+                                            Over 300 different cards available
+                                        </span>
+                                    </div>
+                                    <div class="ml-auto card-hover-indicator align-self-center">
+                                        <fa-icon [icon]="['fas', 'chevron-right']" class="font-size-lg"></fa-icon>
+                                    </div>
+                                </div>
+                            </a>
+                            <a [routerLink]="['/regular-tables-2']" class="d-flex px-2 align-items-center dropdown-item rounded">
+                                <div class="align-box-row w-100">
+                                    <div class="mr-3">
+                                        <div class="bg-happy-green text-center text-white d-40 rounded-circle">
+                                            <fa-icon [icon]="['fas', 'table']"></fa-icon>
+                                        </div>
+                                    </div>
+                                    <div class="text-truncate max-w-70 overflow-hidden">
+                                        <div class="font-weight-bold text-primary d-block">Tables</div>
+                                        <span class="text-black-50">
+                                            Multiple, easy to customise tables
+                                        </span>
+                                    </div>
+                                    <div class="ml-auto card-hover-indicator align-self-center">
+                                        <fa-icon [icon]="['fas', 'chevron-right']" class="font-size-lg"></fa-icon>
+                                    </div>
+                                </div>
+                            </a>
+                            <a [routerLink]="['/forms-wizard']" class="d-flex px-2 align-items-center dropdown-item rounded">
+                                <div class="align-box-row w-100">
+                                    <div class="mr-3">
+                                        <div class="bg-skim-blue text-center text-white d-40 rounded-circle">
+                                            <fa-icon [icon]="['fas', 'align-center']"></fa-icon>
+                                        </div>
+                                    </div>
+                                    <div class="text-truncate max-w-70 overflow-hidden">
+                                        <div class="font-weight-bold text-primary d-block">Forms</div>
+                                        <span class="text-black-50">
+                                            Over 50 forms elements included
+                                        </span>
+                                    </div>
+                                    <div class="ml-auto card-hover-indicator align-self-center">
+                                        <fa-icon [icon]="['fas', 'chevron-right']" class="font-size-lg"></fa-icon>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="list-group-item list-group-item-action align-box-row p-2">
+                            <a [routerLink]="['/dashboard-default']" class="btn btn-pill btn-second btn-block">
+                                View Live Demo
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex-grow-1 w-100 d-flex align-items-center">
+        <div class="bg-composed-wrapper--image bg-composed-filter-rm opacity-9" style="background-image: url('assets/images/hero-bg/hero-6.jpg');"></div>
+        <div class="bg-composed-wrapper--content pt-5 pb-2 py-lg-5">
+            <div class="container pb-5">
+                <div class="row">
+                    <div class="col-lg-7 col-xl-6 d-flex align-items-center">
+                        <div>
+                            <div class="d-flex align-items-center">
+                                <span class="badge badge-pill badge-danger px-4 h-auto py-1">angular</span>
+                                <span class="text-black-50 pl-2" placement="right"
+                                      tooltip="This page was built using only available elements from this admin dashboard template!">
+                                    <fa-icon [icon]="['far', 'question-circle']"></fa-icon>
+                                </span>
+                            </div>
+                            <div class="text-black mt-3">
+                                <h1 class="display-2 mb-3 font-weight-bold">
+                                    Bamburgh Angular Admin Dashboard with NGX Bootstrap PRO
+                                </h1>
+                                <p class="font-size-lg text-black-50">
+                                    It&#39;s the most complete frontend development solution that will help you build powerful &amp; scalable web applications or beautiful presentation websites.
+                                </p>
+                                <p class="text-black">Bamburgh is crafted to perfection making it the most developer friendly &amp; easy to use Bootstrap admin dashboard template.</p>
+                                <div class="divider border-2 border-dark my-4 border-light opacity-2 rounded-circle w-25"></div>
+                                <div>
+                                    <a [routerLink]="['/dashboard-default']" class="btn btn-lg btn-second d-block d-sm-inline-block" title="View Bamburgh Angular Admin Dashboard with NGX Bootstrap PRO Live Preview">
+                                        <span class="btn-wrapper--label">
+                                            Live Demo
+                                        </span>
+                                        <span class="btn-wrapper--icon">
+                                            <fa-icon [icon]="['fas', 'arrow-right']"></fa-icon>
+                                        </span>
+                                    </a>
+                                    <a class="btn btn-lg btn-outline-second d-block d-sm-inline-block ml-0 mt-3 mt-sm-0 ml-sm-3" href="https://uifort.com/template/bamburgh-angular-admin-dashboard-ngx-bootstrap-pro" target="_blank" title="Read about what Bamburgh Angular Admin Dashboard with NGX Bootstrap PRO has to offer!">
+                                        <span class="btn-wrapper--icon">
+                                            <fa-icon [icon]="['fas', 'external-link-alt']"></fa-icon>
+                                        </span>
+                                        <span class="btn-wrapper--label">
+                                            View details
+                                        </span>
+                                    </a>
+                                </div>
+                                <small class="d-block pt-3">
+                                    350+ custom-made, beautiful components, widgets, pages, dashboards and applications.
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-5 col-xl-6 px-0 d-none d-lg-flex align-items-center">
+                        <img  class="w-100 mx-auto d-block img-fluid" src="assets/images/illustrations/presentation-blocks.svg">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="hero-footer pt-3 pb-3 py-lg-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="card-box-hover-rise card-box-hover card card-box-alt card-border-top border-success mb-5 pb-4">
+                        <h3 class="font-size-lg font-weight-bold mt-5 mb-4">Easy to understand</h3>
+                        <p class="card-text px-3 px-xl-4 mb-4">
+                            Clean code, no unnecessary complicated stuff, comments and explanations along the way.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card-box-hover-rise card-box-hover card card-box-alt card-border-top border-first mb-5 pb-4">
+                        <h3 class="font-size-lg font-weight-bold mt-5 mb-4">Simple to use</h3>
+                        <p class="card-text px-3 px-xl-4 mb-4">
+                            Bamburgh has a modular architecture, which makes it a breeze to implement and customise.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card-box-hover-rise card-box-hover card card-box-alt card-border-top border-warning mb-5 pb-4">
+                        <h3 class="font-size-lg font-weight-bold mt-5 mb-4">Starter Templates</h3>
+                        <p class="card-text px-3 px-xl-4 mb-4">
+                            Together with the extensive documentation provided, you will be up and ready in minutes.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="py-5 bg-secondary">
+    <div class="container pb-5">
+        <div class="text-center py-5">
+            <h3 class="display-3 mb-2 font-weight-bold">
+                What's included
+            </h3>
+            <p class="font-size-lg mb-5 text-black-50">
+                Over 350+ elements, widgets and components at your disposal. Everything is developer friendly and highly customisable
+            </p>
+        </div>
+        <div class="row">
+            <div class="col-md-6 col-lg-4">
+                <div class="card p-5 mb-5">
+                    <div class="card-badges">
+                        <span class="badge badge-pill shadow-none badge-success">200+</span>
+                    </div>
+                    <div class="bg-grow-early text-center text-white font-size-xl d-50 rounded">
+                        <fa-icon [icon]="['fas', 'shapes']"></fa-icon>
+                    </div>
+                    <h3 class="font-size-lg font-weight-bold mt-4">UI Elements</h3>
+                    <p class="text-black-50 mt-2">
+                        Bamburgh features easy to use, easy to integrate user interface elements, widgets and
+                        components. Over 200 UI comps included.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="card p-5 mb-5">
+                    <div class="card-badges">
+                        <span class="badge badge-pill shadow-none badge-warning">30+</span>
+                    </div>
+                    <div class="bg-ripe-malin text-center text-white font-size-xl d-50 rounded">
+                        <fa-icon [icon]="['fas', 'align-center']"></fa-icon>
+                    </div>
+                    <h3 class="font-size-lg font-weight-bold mt-4">Form widgets</h3>
+                    <p class="text-black-50 mt-2">
+                        Everything you need to get started, in terms of forms related elements. Datepicker, slider,
+                        calendar and many others...
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="card p-5 mb-5">
+                    <div class="card-badges">
+                        <span class="badge badge-pill shadow-none badge-first">5+</span>
+                    </div>
+                    <div class="bg-malibu-beach text-center text-white font-size-xl d-50 rounded">
+                        <fa-icon [icon]="['fas', 'table']"></fa-icon>
+                    </div>
+                    <h3 class="font-size-lg font-weight-bold mt-4">Tables</h3>
+                    <p class="text-black-50 mt-2">
+                        100% custom styled DataTables included. Also, we added a few example of sortable tables, with
+                        various styles.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="card p-5 mb-5">
+                    <div class="card-badges">
+                        <span class="badge badge-pill shadow-none badge-danger">2</span>
+                    </div>
+                    <div class="bg-arielle-smile text-center text-white font-size-xl d-50 rounded">
+                        <fa-icon [icon]="['fas', 'map-marker-alt']"></fa-icon>
+                    </div>
+                    <h3 class="font-size-lg font-weight-bold mt-4">Maps</h3>
+                    <p class="text-black-50 mt-2">
+                        We've included only the most popular solutions included because we also don't want bloated code
+                        in our apps and sites.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="card p-5 mb-5">
+                    <div class="card-badges">
+                        <span class="badge badge-pill shadow-none badge-info">50+</span>
+                    </div>
+                    <div class="bg-strong-bliss text-center text-white font-size-xl d-50 rounded">
+                        <fa-icon [icon]="['far', 'object-group']"></fa-icon>
+                    </div>
+                    <h3 class="font-size-lg font-weight-bold mt-4">Presentation blocks</h3>
+                    <p class="text-black-50 mt-2">
+                        Testimonials, pricing tables, hero sections and more. Built with UX in mind, beautiful modern
+                        designs and always fully responsive.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="card p-5 mb-5">
+                    <div class="card-badges">
+                        <span class="badge badge-pill shadow-none badge-dark">12</span>
+                    </div>
+                    <div class="bg-plum-plate text-center text-white font-size-xl d-50 rounded">
+                        <fa-icon [icon]="['fas', 'sitemap']"></fa-icon>
+                    </div>
+                    <h3 class="font-size-lg font-weight-bold mt-4">Landing pages</h3>
+                    <p class="text-black-50 mt-2">
+                        We put together some presentation blocks to create these awesome landing pages. Create your own,
+                        with examples from documentation.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="py-5">
+    <div class="text-center py-5">
+        <h3 class="display-3 mb-2 font-weight-bold">
+            Live Preview
+        </h3>
+        <p class="font-size-lg mb-4 text-black-50">
+            12+ dashboard pages, 10+ applications, 8+ pages, 350+ components, 50+ forms widgets
+        </p>
+        <div class="divider border-2 border-dark my-4 mx-auto border-light opacity-2 rounded-circle w-25"></div>
+        <div>
+            <a [routerLink]="['/dashboard-default']" class="btn btn-lg btn-success d-block d-sm-inline-block" title="View Bamburgh Angular Admin Dashboard with NGX Bootstrap PRO Live Preview">
+                <span class="btn-wrapper--label">
+                    Live Demo
+                </span>
+                <span class="btn-wrapper--icon">
+                    <fa-icon [icon]="['fas', 'arrow-right']"></fa-icon>
+                </span>
+            </a>
+            <a class="btn btn-lg btn-outline-second d-block d-sm-inline-block ml-0 mt-3 mt-sm-0 ml-sm-3" href="https://uifort.com/template/bamburgh-angular-admin-dashboard-ngx-bootstrap-pro" target="_blank" title="Read about what Bamburgh Angular Admin Dashboard with NGX Bootstrap PRO has to offer!">
+                <span class="btn-wrapper--icon">
+                    <fa-icon [icon]="['fas', 'external-link-alt']"></fa-icon>
+                </span>
+                <span class="btn-wrapper--label">
+                    View details
+                </span>
+            </a>
+        </div>
+        <small class="d-block pt-3">
+            350+ custom-made, beautiful components, widgets, pages, dashboards and applications.
+        </small>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-6 bg-premium-dark">
+            <div class="p-0 p-lg-5">
+                <app-icons-fontawesome></app-icons-fontawesome>
+            </div>
+        </div>
+        <div class="col-xl-6 bg-night-sky">
+            <div class="p-0 p-lg-5">
+                <app-icons-feather></app-icons-feather>
+            </div>
+        </div>
+        <div class="col-xl-6 bg-royal">
+            <div class="p-0 p-lg-5">
+                <app-icons-ion></app-icons-ion>
+            </div>
+        </div>
+        <div class="col-xl-6 bg-midnight-bloom">
+            <div class="p-0 p-lg-5">
+                <app-icons-pe7></app-icons-pe7>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="py-5 bg-light">
+    <div class="text-center py-5">
+        <h3 class="display-3 mb-2 font-weight-bold">
+            Live Preview
+        </h3>
+        <p class="font-size-lg mb-4 text-black-50">
+            12+ dashboard pages, 10+ applications, 8+ pages, 350+ components, 50+ forms widgets
+        </p>
+        <div class="divider border-2 border-dark my-4 mx-auto border-light opacity-2 rounded-circle w-25"></div>
+        <div>
+            <a [routerLink]="['/dashboard-default']" class="btn btn-lg btn-success d-block d-sm-inline-block" title="View Bamburgh Angular Admin Dashboard with NGX Bootstrap PRO Live Preview">
+                <span class="btn-wrapper--label">
+                    Live Demo
+                </span>
+                <span class="btn-wrapper--icon">
+                    <fa-icon [icon]="['fas', 'arrow-right']"></fa-icon>
+                </span>
+            </a>
+            <a class="btn btn-lg btn-outline-second d-block d-sm-inline-block ml-0 mt-3 mt-sm-0 ml-sm-3" href="https://uifort.com/template/bamburgh-angular-admin-dashboard-ngx-bootstrap-pro" target="_blank" title="Read about what Bamburgh Angular Admin Dashboard with NGX Bootstrap PRO has to offer!">
+                <span class="btn-wrapper--icon">
+                    <fa-icon [icon]="['fas', 'external-link-alt']"></fa-icon>
+                </span>
+                <span class="btn-wrapper--label">
+                    View details
+                </span>
+            </a>
+        </div>
+        <small class="d-block pt-3">
+            350+ custom-made, beautiful components, widgets, pages, dashboards and applications.
+        </small>
+    </div>
+</div>
+<div class="py-5">
+    <div class="container">
+        <div class="feature-box py-5">
+            <div class="container py-5">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="py-0 pb-5 py-lg-5">
+                            <div class="pr-0 pr-lg-5">
+                                <h1 class="display-3 mb-3 font-weight-bold">
+                                    Powered by Bootstrap 4
+                                </h1>
+                                <p class="font-size-lg text-black-50">
+                                    All Bootstrap 4 components and options are available in Bamburgh, built with design-perfect styles and attention to details.
+                                </p>
+                            </div>
+                            <div class="d-block mt-4">
+                                <ngx-slick-carousel [config]='
+                                {
+                                    "slidesToShow": 1,
+                                    "slidesToScroll": 1,
+                                    "dots": true,
+                                    "prevArrow": "<button type=\"button\" class=\"slick-prev\"><i class=\"ion-ios-arrow-back font-size-xl\"></i></button>",
+                                    "nextArrow": "<button type=\"button\" class=\"slick-next\"><i class=\"ion-ios-arrow-forward font-size-xl\"></i></fa-icon></button>"
+                                }' class="slick-slider slick-slider-left">
+                                    <div ngxSlickItem>
+                                        <div class="feature-box pr-4">
+                                            <h3 class="font-size-lg font-weight-bold my-3">
+                                                <a  class="text-first" title="">
+                                                    Grids
+                                                </a>
+                                            </h3>
+                                            <p class="text-black-50 mb-3">
+                                                Use the power of the popular Bootstrap grids to create any layout your project requires.
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div ngxSlickItem>
+                                        <div class="feature-box pr-4">
+                                            <h3 class="font-size-lg font-weight-bold my-3">
+                                                <a  class="text-first" title="">
+                                                    Components
+                                                </a>
+                                            </h3>
+                                            <p class="text-black-50 mb-3">
+                                                There are a ton of premium carefully crafted components, for you to choose from.
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div ngxSlickItem>
+                                        <div class="feature-box pr-4">
+                                            <h3 class="font-size-lg font-weight-bold my-3">
+                                                <a  class="text-first" title="">
+                                                    Widgets
+                                                </a>
+                                            </h3>
+                                            <p class="text-black-50 mb-3">
+                                                We've integrated using our custom style and design, over 20 various jQuery widgets.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </ngx-slick-carousel>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex col-lg-6 align-items-center">
+                        <img  class="img-fluid" src="assets/images/illustrations/projections.svg">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="feature-box bg-secondary rounded py-5">
+            <div class="container">
+                <div class="row">
+                    <div class="d-flex col-lg-5 align-items-center">
+                        <img  class="img-fluid" src="assets/images/illustrations/process.svg">
+                    </div>
+                    <div class="col-lg-7 d-flex align-items-center">
+                        <div class="pl-0 pl-lg-5 pr-0 pl-lg-5">
+                            <div class="mt-4 mt-lg-0">
+                                <span class="badge badge-pill badge-warning px-4 h-auto">Gulp</span>
+                            </div>
+                            <h1 class="display-3 my-3 font-weight-bold">
+                                Build tools included
+                            </h1>
+                            <p class="font-size-lg text-black-50 mb-0">
+                                Bamburgh comes with a simple to use, yet powerful build system, powered by Gulp and NPM.
+                            </p>
+                            <div class="divider my-4"></div>
+                            <div>
+                                <div class="feature-box text-black">
+                                    <h3 class="font-size-lg font-weight-bold mt-4">Assets optimisation</h3>
+                                    <p class="text-black-50 mb-0 mt-2">
+                                        You can either use the already compiled assets or you could use the Gulp task to optimize images, SVGs and concatenate SCSS to CSS yourself.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="bg-royal pt-5">
+    <div class="container py-5">
+        <div class="card shadow-lg mb-5">
+            <div class="p-5">
+                <div class="d-flex flex-column flex-lg-row align-items-center">
+                    <div class="pl-0 pl-lg-5 py-0 py-md-2 text-center text-lg-left">
+                        <div class="mb-4">
+                            <span class="badge badge-pill badge-success">FREE</span>
+                            <h1 class="display-3 my-3 font-weight-bold">
+                                The FREE open-source version!
+                            </h1>
+                            <p class="font-size-lg text-black-50">
+                                There's also a free version of Bamburgh Angular Admin Dashboard with NGX Bootstrap PRO, released under a MIT license, which doesn't include all the wonderful features, but can be pretty useful for smaller projects.
+                            </p>
+                        </div>
+                        <div>
+                            <a class="btn btn-lg btn-outline-success" href="https://uifort.com/template/bamburgh-angular-admin-dashboard-ngx-bootstrap-free" target="_blank">
+                                <span class="btn-wrapper--icon">
+                                    <fa-icon [icon]="['far', 'question-circle']"></fa-icon>
+                                </span>
+                                <span class="btn-wrapper--label">
+                                    View free version
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <img  class="img-fluid" src="assets/images/illustrations/data_points.svg">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="py-5 bg-secondary">
+    <div class="text-center py-5">
+        <h3 class="display-3 mb-2 font-weight-bold">
+            Live Preview
+        </h3>
+        <p class="font-size-lg mb-4 text-black-50">
+            12+ dashboard pages, 10+ applications, 8+ pages, 350+ components, 50+ forms widgets
+        </p>
+        <div class="divider border-2 border-dark my-4 mx-auto border-light opacity-2 rounded-circle w-25"></div>
+        <div>
+            <a [routerLink]="['/dashboard-default']" class="btn btn-lg btn-success d-block d-sm-inline-block" title="View Bamburgh Angular Admin Dashboard with NGX Bootstrap PRO Live Preview">
+                <span class="btn-wrapper--label">
+                    Live Demo
+                </span>
+                <span class="btn-wrapper--icon">
+                    <fa-icon [icon]="['fas', 'arrow-right']"></fa-icon>
+                </span>
+            </a>
+            <a class="btn btn-lg btn-outline-second d-block d-sm-inline-block ml-0 mt-3 mt-sm-0 ml-sm-3" href="https://uifort.com/template/bamburgh-angular-admin-dashboard-ngx-bootstrap-pro" target="_blank" title="Read about what Bamburgh Angular Admin Dashboard with NGX Bootstrap PRO has to offer!">
+                <span class="btn-wrapper--icon">
+                    <fa-icon [icon]="['fas', 'external-link-alt']"></fa-icon>
+                </span>
+                <span class="btn-wrapper--label">
+                    View details
+                </span>
+            </a>
+        </div>
+        <small class="d-block pt-3">
+            350+ custom-made, beautiful components, widgets, pages, dashboards and applications.
+        </small>
+    </div>
+</div>
+<div class="py-5">
+    <div class="container py-5">
+        <div class="px-0 col-lg-8 col-md-10 col-sm-12 mx-auto text-center">
+            <h1 class="display-3 mb-4 font-weight-bold">
+                Bamburgh admin dashboard template is available for multiple frameworks
+            </h1>
+            <p class="font-size-lg text-black-50">
+                Bamburgh is also available with integrations for the following frontend/backend frameworks:
+            </p>
+        </div>
+        <div class="mt-4 text-center d-flex flex-row flex-wrap justify-content-center">
+            <div>
+                <a class="card card-box card-box-hover-rise px-2 pt-2 pb-3 m-3" href="https://uifort.com/template/bamburgh-react-admin-dashboard-reactstrap-pro" title="Click to visit the presentation page for Bamburgh React version">
+                    <b>Bamburgh for React</b>
+                    <img src="https://demo.uifort.com/github-static-assets/framework-logo/react-framework-logo.png" alt="Bamburgh Angular Admin Dashboard with NGX Bootstrap PRO" />
+                    <span class="text-black-50 details-helper">Click for details</span>
+                </a>
+            </div>
+            <div>
+                <a class="card card-box card-box-hover-rise px-2 pt-2 pb-3 m-3" href="https://uifort.com/template/bamburgh-angular-admin-dashboard-ngx-bootstrap-pro" title="Click to visit the presentation page for Bamburgh Angular version">
+                    <b>Bamburgh for Angular</b>
+                    <img src="https://demo.uifort.com/github-static-assets/framework-logo/angular-framework-logo.png" alt="Bamburgh Angular Admin Dashboard with NGX Bootstrap PRO" />
+                    <span class="text-black-50 details-helper">Click for details</span>
+                </a>
+            </div>
+            <div>
+                <div class="card card-box px-2 pt-2 pb-3 m-3 opacity-6">
+                    <b>Bamburgh for Vue.js</b>
+                    <img src="https://demo.uifort.com/github-static-assets/framework-logo/vue-framework-logo.png" alt="Bamburgh for Vue.js" />
+                    <i class="details-helper text-black-50">Not yet available</i>
+                </div>
+            </div>
+            <div>
+                <div class="card card-box px-2 pt-2 pb-3 m-3 opacity-6">
+                    <b>Bamburgh for HTML5/jQuery</b>
+                    <img src="https://demo.uifort.com/github-static-assets/framework-logo/html-framework-logo.png" alt="Bamburgh for HTML5/jQuery" />
+                    <i class="details-helper text-black-50">Not yet available</i>
+                </div>
+            </div>
+            <div>
+                <div class="card card-box px-2 pt-2 pb-3 m-3 opacity-6">
+                    <b>Bamburgh for Laravel</b>
+                    <img src="https://demo.uifort.com/github-static-assets/framework-logo/laravel-framework-logo.png" alt="Bamburgh for Laravel" />
+                    <i class="details-helper text-black-50">Not yet available</i>
+                </div>
+            </div>
+            <div>
+                <div class="card card-box px-2 pt-2 pb-3 m-3 opacity-6">
+                    <b>Bamburgh for Node.js</b>
+                    <img src="https://demo.uifort.com/github-static-assets/framework-logo/nodejs-framework-logo.png" alt="Bamburgh for Node.js" />
+                    <i class="details-helper text-black-50">Not yet available</i>
+                </div>
+            </div>
+            <div>
+                <div class="card card-box px-2 pt-2 pb-3 m-3 opacity-6">
+                    <b>Bamburgh for ASP.NET</b>
+                    <img src="https://demo.uifort.com/github-static-assets/framework-logo/asp-framework-logo.png" alt="Bamburgh for ASP.NET" />
+                    <i class="details-helper text-black-50">Not yet available</i>
+                </div>
+            </div>
+            <div>
+                <div class="card card-box px-2 pt-2 pb-3 m-3 opacity-6">
+                    <b>Bamburgh for Nuxt.js</b>
+                    <img src="https://demo.uifort.com/github-static-assets/framework-logo/nuxtjs-framework-logo.png" alt="Bamburgh for Nuxt.js" />
+                    <i class="details-helper text-black-50">Not yet available</i>
+                </div>
+            </div>
+            <div>
+                <div class="card card-box px-2 pt-2 pb-3 m-3 opacity-6">
+                    <b>Bamburgh for Next.js</b>
+                    <img src="https://demo.uifort.com/github-static-assets/framework-logo/nextjs-framework-logo.png" alt="Bamburgh for Next.js" />
+                    <i class="details-helper text-black-50">Not yet available</i>
+                </div>
+            </div>
+            <div>
+                <div class="card card-box px-2 pt-2 pb-3 m-3 opacity-6">
+                    <b>Bamburgh for React Native</b>
+                    <img src="https://demo.uifort.com/github-static-assets/framework-logo/react-native-framework-logo.png" alt="Bamburgh for React Native" />
+                    <i class="details-helper text-black-50">Not yet available</i>
+                </div>
+            </div>
+            <div>
+                <div class="card card-box px-2 pt-2 pb-3 m-3 opacity-6">
+                    <b>Bamburgh for Flutter</b>
+                    <img src="https://demo.uifort.com/github-static-assets/framework-logo/flutter-framework-logo.png" alt="Bamburgh for Flutter" />
+                    <i class="details-helper text-black-50">Not yet available</i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="bg-first py-5">
+    <div class="container pt-sm-0 pt-md-5">
+        <div class="px-0 col-lg-6 col-md-8 col-sm-12 mx-auto text-center">
+            <h1 class="display-3 mb-4 text-white font-weight-bold">
+                Stay up to date
+            </h1>
+            <p class="font-size-lg text-white-50">
+                Follow us on any of our social media accounts to find out when we release new products or updates.
+            </p>
+        </div>
+        <div class="divider border-2 d-sm-none d-md-block rounded-circle border-white bg-white opacity-2 mx-auto mb-4 mt-5 w-50"></div>
+        <ul class="nav nav-transparent justify-content-center">
+            <li class="nav-item">
+                <a class="nav-link text-white-50" containerClass="tooltip-secondary" href="https:&#x2F;&#x2F;www.facebook.com&#x2F;UiFort" rel="nofollow" target="_blank" tooltip="Facebook">
+                        <span class="btn-wrapper--icon">
+                             <fa-icon [icon]="['fab', 'facebook']" class="font-size-xxl"></fa-icon>
+                        </span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white-50" containerClass="tooltip-secondary" href="https:&#x2F;&#x2F;twitter.com&#x2F;uifort1" rel="nofollow" target="_blank" tooltip="Twitter">
+                        <span class="btn-wrapper--icon">
+                             <fa-icon [icon]="['fab', 'twitter']" class="font-size-xxl"></fa-icon>
+                        </span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white-50" containerClass="tooltip-secondary" href="https:&#x2F;&#x2F;www.instagram.com&#x2F;uifort1" rel="nofollow" target="_blank" tooltip="Instagram">
+                        <span class="btn-wrapper--icon">
+                             <fa-icon [icon]="['fab', 'instagram']" class="font-size-xxl"></fa-icon>
+                        </span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white-50" containerClass="tooltip-secondary" href="https:&#x2F;&#x2F;discord.gg&#x2F;mddFBQX" rel="nofollow" target="_blank" tooltip="Discord">
+                        <span class="btn-wrapper--icon">
+                             <fa-icon [icon]="['fab', 'discord']" class="font-size-xxl"></fa-icon>
+                        </span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white-50" containerClass="tooltip-secondary" href="https:&#x2F;&#x2F;dribbble.com&#x2F;UiFort" rel="nofollow" target="_blank" tooltip="Dribbble">
+                        <span class="btn-wrapper--icon">
+                             <fa-icon [icon]="['fab', 'dribbble']" class="font-size-xxl"></fa-icon>
+                        </span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white-50" containerClass="tooltip-secondary" href="https:&#x2F;&#x2F;github.com&#x2F;uifort" rel="nofollow" target="_blank" tooltip="Github">
+                        <span class="btn-wrapper--icon">
+                             <fa-icon [icon]="['fab', 'github']" class="font-size-xxl"></fa-icon>
+                        </span>
+                </a>
+            </li>
+        </ul>
+        <div class="divider border-2 d-sm-none d-md-block rounded-circle border-white bg-white opacity-2 mx-auto my-4 w-50"></div>
+        <div class="px-0 col-lg-6 col-md-8 col-sm-12 mx-auto text-center">
+            <div class="card border-0 mt-5 card-box">
+                <div class="card-body">
+                    <div class="text-black">
+                        <h1 class="display-4 mb-3 font-weight-bold">
+                            Newsletter updates
+                        </h1>
+                        <p class="font-size-md mb-4 text-black-50">
+                            Subscribe to our newsletter to be the first to find out when we offer promotions or discounts for our products.
+                        </p>
+                        <div id="mc_embed_signup">
+                            <form action="https://gmail.us3.list-manage.com/subscribe/post?u=3ebc33a3d37f2278158d74721&amp;id=a122e673aa" class="validate" id="mc-embedded-subscribe-form" method="post" name="mc-embedded-subscribe-form" novalidate target="_blank">
+                                <div class="row">
+                                    <div class="col-md-8 pr-md-0">
+                                        <div id="mc_embed_signup_scroll">
+                                            <div class="mc-field-group">
+                                                <input class="form-control required email" id="mce-EMAIL" name="EMAIL" placeholder="Your email address..." type="email" value="">
+                                            </div>
+                                            <div class="clear" id="mce-responses">
+                                                <div class="response" id="mce-error-response" style="display:none"></div>
+                                                <div class="response" id="mce-success-response" style="display:none"></div>
+                                            </div>
+                                            <div aria-hidden="true" style="position: absolute; left: -5000px;"><input name="b_3ebc33a3d37f2278158d74721_a122e673aa" tabindex="-1" type="text" value=""></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mt-3 mt-md-0">
+                                        <button class="btn d-block w-100 btn-first" id="mc-embedded-subscribe" name="subscribe" type="submit">
+                                            <span class="btn-wrapper--label">
+                                                Sign up
+                                            </span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <small class="text-black-50 d-block pt-3">We promise not to spam your inbox. We also hate spam!</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mt-5">
+            <small class="text-center d-block text-white-50">
+                Copyright &copy; 2019 - <a class="text-white" href="https://uifort.com" title="UiFort">UiFort.com</a>
+            </small>
+        </div>
+    </div>
+</div>
+
+
+
