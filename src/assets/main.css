@@ -1,0 +1,21 @@
+.profile-img-preview{
+  width: 800px !important;
+  height: 800px !important;
+}
+.profile-img-div{
+  left: 3% !important;
+  padding-top: 45px !important;
+}
+.cover-img-preview{
+  width: 800px !important;
+  height: 800px !important;
+}
+.cover-img-div{
+  left: 3% !important;
+  padding-top: 17px !important;
+}
+.profile-pic{
+  width: 250px !important;
+  height: 200px !important;
+  object-fit: cover !important;
+}
