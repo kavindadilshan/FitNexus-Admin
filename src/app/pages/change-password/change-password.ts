@@ -58,7 +58,35 @@ export class ChangePassword {
     } else if (newPassword !== confirmPassword) {
       this.notifier.notify("danger", "passwords do not match,try again..!");
     } else {
-
+      const req = {
+        oldPassword: currentPassword,
+        newPassword: confirmPassword
+      };
+      document.getElementById("finishButton").setAttribute("disabled", "true");
+      this.isLoading = true;
+      this.authenticationService.updatePassword(req).subscribe(
+        res => {
+          if (res.success === true) {
+            this.isLoading = false;
+            this.notifier.notify(
+              "success",
+              "Password has been updated successfully and you need to login again..!"
+            );
+            document.getElementById("finishButton").removeAttribute("disabled");
+            localStorage.clear();
+            this.router.navigate(["/login"]);
+          } else {
+            this.isLoading = false;
+            document.getElementById("finishButton").removeAttribute("disabled");
+            this.notifier.notify("danger", res.message);
+          }
+        },
+        error1 => {
+          this.isLoading = false;
+          document.getElementById("finishButton").removeAttribute("disabled");
+          this.notifier.notify("danger", "Can't Process This Request");
+        }
+      );
     }
   }
 
