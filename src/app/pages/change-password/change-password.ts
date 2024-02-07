@@ -40,7 +40,26 @@ export class ChangePassword {
    * Update Account Password
    */
   changePassword() {
+    const currentPassword = this.updatePassword.controls.oldPassword.value.trim();
+    const newPassword = this.updatePassword.controls.newPassword.value.trim();
+    const confirmPassword = this.updatePassword.controls.confirmPassword.value.trim();
 
+    if (currentPassword === "") {
+      this.notifier.notify("danger", "Please enter old password..!");
+    } else if (newPassword === "") {
+      this.notifier.notify("danger", "Please enter new password..!");
+    } else if (newPassword.length < 6) {
+      this.notifier.notify(
+        "danger",
+        "Password should be at least 6 characters..!"
+      );
+    } else if (confirmPassword === "") {
+      this.notifier.notify("danger", "Please retype new password");
+    } else if (newPassword !== confirmPassword) {
+      this.notifier.notify("danger", "passwords do not match,try again..!");
+    } else {
+
+    }
   }
 
   /**
