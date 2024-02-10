@@ -1,0 +1,438 @@
+<div *ngIf="userRole === 'ROLE_SUPER_ADMIN'"  class="col-9">
+  <form autocomplete="off" (keydown.enter)="$event.preventDefault()" name="enrollmentForm"
+        [formGroup]="filterClassForm" >
+    <div class="position-relative row form-group">
+      <label class="col-sm-3 col-form-label font-weight-bold" >Business Profile :</label>
+      <div class="col-sm-6" style="right: 50px">
+        <select class="form-control" id="businessProfile"  formControlName="businessProfile">
+          <option *ngFor="let val of profiles" [value]="val.id">{{val.name}}</option>
+        </select>
+      </div>
+      <div class="form-group col-sm-3" style="right: 50px;zoom: 88%;">
+        <button data-style="slide-down" data-spinner-size="30" [ladda]="isLoading" (click)="filterClassList(size,page)" class="btn btn-success" type="button">Filter</button>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="card card-box mb-5 screen">
+  <div class="card-header py-3">
+    <div class="card-header--title font-size-lg">
+      <div class="d-flex justify-content-between px-4 py-3">
+        <div class="search-wrapper">
+          <span class="icon-wrapper text-black">
+            <fa-icon [icon]="['fas', 'search']"></fa-icon>
+          </span>
+          <form autocomplete="off" (keydown.enter)="$event.preventDefault()" name="searchPackageTypeForm" [formGroup]="searchClassForm">
+            <input class="form-control search-field form-control-sm rounded-pill" (search)="clear()" (keyup)="searchClass(size,page)" name="search" formControlName="search" placeholder="Search terms..." type="search">
+          </form>
+        </div>
+      </div>
+    </div>
+    <div style="zoom: 93%;" class="card-header--actions">
+      <button (click)="createProfileRoute()" class="btn m-2 btn-pill btn-warning" type="button">Create</button>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="divider"></div>
+    <div class="table-responsive">
+      <table class="table table-hover table-striped table-bordered mb-0">
+        <thead>
+        <tr>
+          <th class="bg-white" style="width: 20%;">Class</th>
+          <th class="bg-white">Type</th>
+          <th class="bg-white">Ratings (no of reviews)</th>
+          <th class="bg-white">No of sessions</th>
+          <th class="bg-white">Session</th>
+          <th class="bg-white">More Info</th>
+          <th class="bg-white">Action</th>
+          <th class="bg-white">Visibility</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let val of returnedArray">
+          <td>
+            <div class="d-flex align-items-center">
+              <div class="avatar-icon-wrapper mr-2">
+                <div class="avatar-icon">
+                  <img  *ngIf="val['profileImage'] !== null" [src]='val.profileImage||"assets/images/no-image-available.png"'/>
+                  <img  *ngIf="val['profileImage'] === null" src="assets/images/no-image-available.png"/>
+                </div>
+              </div>
+              <div>
+                <a  class="font-weight-bold text-black" >
+                  {{val.name}}
+                </a>
+              </div>
+            </div>
+          </td>
+          <td>{{val.classTypeName}}</td>
+          <td>
+            <div class="d-flex align-items-center">
+              <bar-rating [(rate)]="val.rating" style="pointer-events: none;" [theme]="'rating-icons-default'" class="rating-warning" [max]="5"></bar-rating>
+              <div>
+                &nbsp;&nbsp;<span><b>({{val.ratingCount}})</b></span>
+              </div>
+            </div>
+          </td>
+          <td class="text-center">
+            {{val.sessionCount}}
+          </td>
+          <td style="zoom: 93%;" class="text-center">
+            <button [routerLink]="'/create-physical-session/'+val.businessProfileId+'/'+val.classId+'/'+val.name+'/'+val.paymentModel"  class="btn m-2 btn-pill btn-primary" type="button">Create</button>
+            <button [routerLink]="'/Physical-class-session-list/'+val.businessProfileId+'/'+val.name+'/'+val.classId+'/'+val.paymentModel" class="btn m-2 btn-pill btn-info" type="button">View</button>
+          </td>
+          <td style="zoom: 93%;" class="text-center">
+            <button (click)="openMoreInfoModel(val)"  class="btn m-2 btn-pill btn-first" type="button">View</button>
+          </td>
+          <td style="zoom: 93%;" class="text-center">
+            <button  [routerLink]="'/update-physical-class/'+val.businessProfileId+'/'+val.classId+'/'+businessProfile" class="btn m-2 btn-pill btn-second" type="button">Edit</button>
+          </td>
+          <td (mouseover)="getId(val.classId,val.visible)" style="zoom: 93%;" class="text-center">
+            <ui-switch [checked]="val.visible" checkedLabel="Yes"   id="uncheck" [beforeChange]="OnBeforeChange"  size="small" uncheckedLabel="No"></ui-switch>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card-footer py-3 d-flex justify-content-between">
+      <pagination *ngIf="totalElement > 10"  [boundaryLinks]="true"
+                   [rotate]="true"
+                   (pageChanged)="pageChanged($event)"
+                   [itemsPerPage]="size"
+                   [maxSize]="3"
+                   [totalItems]="totalElement"  class="pagination-icons pagination-second"></pagination>
+    </div>
+  </div>
+</div>
+<div bsModal #moreInfoModal="bs-modal" class="modal fade screen" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content border-0 bg-transparent">
+      <div class="row no-gutters">
+        <div class="col-lg-12">
+          <div class="bg-white rounded-left rounded-right">
+            <div class="modal-header">
+              <button type="button" class="close" aria-label="Close" (click)="moreInfoModal.hide()">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="card card-box mb-5">
+                <div class="card-header-alt p-4">
+                  <h6 class="font-weight-bold font-size-lg mb-1 text-black">General Information</h6>
+                </div>
+                <div class="divider"></div>
+                <div class="card-body pt-2 px-4 pb-4">
+                  <form autocomplete="off" (keydown.enter)="$event.preventDefault()" name="moreInfoForm" [formGroup]="moreInfoForm">
+                    <div class="form-row">
+                      <div class="col-md-12">
+                        <div class="position-relative row form-group">
+                          <label class="col-sm-3 col-form-label font-weight-bold" for="name">Name</label>
+                          <div class="col-sm-8">
+                            <input readonly class="form-control" formControlName="name" id="name" name="name"
+                                   placeholder="Name" type="text"></div>
+                        </div>
+                        <div class="position-relative row form-group">
+                          <label class="col-sm-3 col-form-label font-weight-bold"
+                                 for="studioProfile">Studio Profile</label>
+                          <div class="col-sm-8">
+                            <input readonly formControlName="studioProfile" class="form-control" id="studioProfile" name="studioProfile"
+                                   placeholder="Studio Profile" type="text"></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="description" class="font-weight-bold">Description</label>
+                          <textarea readonly name="description" formControlName="description" rows="6" class="form-control" id="description"
+                                    placeholder="Description"></textarea>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="prepare" class="font-weight-bold">How to Prepare</label>
+                          <textarea readonly name="prepare" formControlName="prepare" rows="6" class="form-control" id="prepare"
+                                    placeholder="How to Prepare"></textarea>
+                        </div>
+                      </div>
+                      <div class="col-md-12">
+                      <div class="form-group">
+                        <label for="description" class="font-weight-bold">Video URL</label>
+                        <input readonly class="form-control" name="videoURl" formControlName="videoURl" id="videoURl"
+                               placeholder="Video URL" type="text">
+                      </div>
+                      </div>
+                    </div>
+                    <div class="form-row">
+                      <div class="col-md-6">
+                        <div class="position-relative row form-group">
+                          <label class="col-sm-3 col-form-label font-weight-bold"
+                                 for="type">Type</label>
+                          <div class="col-sm-8">
+                            <input readonly formControlName="type" class="form-control" id="type" name="type"
+                                   placeholder="Type" type="text"></div>
+                        </div>
+                        <div class="position-relative row form-group"><label class="col-sm-3 col-form-label font-weight-bold"
+                                                                             for="firstSession">First Session Free</label>
+                          <div class="col-sm-8"><input readonly class="form-control" formControlName="firstSession" id="firstSession" name="firstSession"
+                                                       placeholder="First Session Free" type="text"></div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="position-relative row form-group"><label class="col-sm-4 col-form-label font-weight-bold"
+                                                                             for="calorie">Calorie Burnout (Cal)</label>
+                          <div class="col-sm-8"><input readonly class="form-control" formControlName="calorie" id="calorie" name="calorie"
+                                                       placeholder="Calorie Burnout (Cal)" type="text"></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-row">
+                      <div class="col-md-3" >
+                        <div class="form-group">
+                          <label class="font-weight-bold">Profile Image</label>
+                          <div class="d-flex flex-column flex-sm-row align-items-start">
+                            <div>
+                              <div class="card card-transparent mb-3 mb-sm-0" style="display:block;border: 2px dashed  #1d1c1c;
+                          border-radius: 10px;">
+                                <a  class="card-img-wrapper rounded">
+                                  <div class="img-wrapper-overlay">
+                                    <div class="overlay-btn-wrapper">
+                                      <!--                                      <button  class="btn btn-pill btn-sm btn-outline-secondary border-0 shadow-none pl-2 pr-2 mx-auto d-flex align-items-center"-->
+                                      <!--                                               type="button">-->
+                                      <!--                                        <fa-icon [icon]="['fas', 'camera-retro']" class="font-size-lg"></fa-icon>-->
+                                      <!--                                      </button>-->
+                                    </div>
+                                  </div>
+                                  <img  class="card-img-top rounded" id="profileImage"
+                                        src="assets/images/no-image-available.png" >
+                                </a>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-3" >
+                        <div class="form-group">
+                          <label class="font-weight-bold">Cover Images</label>
+                          <div class="d-flex flex-column flex-sm-row align-items-start">
+                            <div>
+                              <div class="card card-transparent mb-3 mb-sm-0" style="display:block;border: 2px dashed  #1d1c1c;
+                          border-radius: 10px;">
+                                <a  class="card-img-wrapper rounded">
+                                  <div class="img-wrapper-overlay">
+                                    <div class="overlay-btn-wrapper">
+                                    </div>
+                                  </div>
+                                  <img  class="card-img-top rounded" *ngIf="imageDetailsArray[0] !== undefined" [src]='imageDetailsArray[0]||"assets/images/no-image-available.png"'/>
+                                  <img  class="card-img-top rounded"  *ngIf="imageDetailsArray[0] === undefined" src="assets/images/no-image-available.png"/>
+                                </a>
+                              </div>
+                            </div>
+                          </div>
+
+                        </div>
+                      </div>
+                      <div style="padding: 8px;" class="col-md-3">
+                        <div class="form-group">
+                          <label class="font-weight-bold"></label>
+                          <div class="d-flex flex-column flex-sm-row align-items-start">
+                            <div>
+                              <div class="card card-transparent mb-3 mb-sm-0" style="display:block;border: 2px dashed  #1d1c1c;
+                          border-radius: 10px;">
+                                <a  class="card-img-wrapper rounded">
+                                  <div class="img-wrapper-overlay">
+                                    <div class="overlay-btn-wrapper">
+                                    </div>
+                                  </div>
+                                  <img  class="card-img-top rounded" *ngIf="imageDetailsArray[1] !== undefined" [src]='imageDetailsArray[1]||"assets/images/no-image-available.png"'/>
+                                  <img  class="card-img-top rounded"  *ngIf="imageDetailsArray[1] === undefined" src="assets/images/no-image-available.png"/>
+                                </a>
+                              </div>
+                            </div>
+                          </div>
+
+                        </div>
+                      </div>
+                      <div style="padding: 8px;" class="col-md-3">
+                        <div class="form-group">
+                          <label class="font-weight-bold"></label>
+                          <div class="d-flex flex-column flex-sm-row align-items-start">
+                            <div>
+                              <div style="display:block;border: 2px dashed  #1d1c1c;
+                          border-radius: 10px;" class="card card-transparent mb-3 mb-sm-0">
+                                <a  class="card-img-wrapper rounded">
+                                  <div class="img-wrapper-overlay">
+                                    <div class="overlay-btn-wrapper">
+                                    </div>
+                                  </div>
+                                  <img  class="card-img-top rounded"  *ngIf="imageDetailsArray[2] !== undefined" [src]='imageDetailsArray[2]||"assets/images/no-image-available.png"'/>
+                                  <img  class="card-img-top rounded" *ngIf="imageDetailsArray[2] === undefined" src="assets/images/no-image-available.png"/>
+                                </a>
+                              </div>
+                            </div>
+                          </div>
+
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+              <div class="card card-box mb-5">
+                <div class="card-header-alt p-4">
+                  <h6 class="font-weight-bold font-size-lg mb-1 text-black">List of Trainers</h6>
+                </div>
+                <div class="divider"></div>
+                <div class="card-body pt-2 px-4 pb-4">
+                  <div class="table-responsive">
+                    <table class="table table-hover table-striped table-bordered mb-0">
+                      <thead>
+                      <tr>
+                        <th>Trainer</th>
+                        <th>Gender</th>
+                        <th>Ratings</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      <tr *ngFor="let val of trainerReturnedArray">
+                        <td>{{val.name}}</td>
+                        <td>{{val.gender}}</td>
+                        <td><bar-rating [(rate)]="val.ratings" style="pointer-events: none;" [theme]="'rating-icons-default'"
+                                        class="rating-warning" [max]="5"></bar-rating></td>
+                      </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <pagination *ngIf="trainerList.length > 5" [boundaryLinks]="true"
+                               [rotate]="false"
+                               (numPages)="numPages = $event"
+                               [firstText]="first"
+                               [lastText]="last"
+                               [itemsPerPage]="5"
+                               (pageChanged)="trainerChanged($event)"
+                               [totalItems]="trainerList.length"  class="pagination-icons pagination-second"></pagination>
+                </div>
+              </div>
+              <div class="card card-box mb-5">
+                <div class="card-header-alt p-4">
+                  <h6 class="font-weight-bold font-size-lg mb-1 text-black">Session</h6>
+                </div>
+                <div class="divider"></div>
+                <div class="card-body pt-2 px-4 pb-4">
+                  <div class="table-responsive">
+                    <table class="table table-hover table-striped table-bordered mb-0">
+                      <thead>
+                      <tr>
+                        <th>Session Name</th>
+                        <th>Date & Time</th>
+                        <th>Status</th>
+                        <th>Enrollments/Max Limit</th>
+                        <th>Trainer</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      <tr *ngFor="let val of sessionListReturnArray">
+                        <td>{{val.sessionName}}</td>
+                        <td>{{returnDateTime(val.dateTime)}}</td>
+                        <td>{{val.status}}</td>
+                        <td>{{val.numberOfEnrollments+" / "+val.maxJoiners}}</td>
+                        <td>{{val.trainerName}}</td>
+                      </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <pagination *ngIf="sessionTotalElement > 5" [boundaryLinks]="true"
+                               [rotate]="false"
+                               (pageChanged)="sessionPageChanged($event)"
+                               [itemsPerPage]="5"
+                               [maxSize]="3"
+                               [totalItems]="sessionTotalElement"  class="pagination-icons pagination-second"></pagination>
+                </div>
+              </div>
+              <div class="card card-box mb-5">
+                <div class="card-header-alt p-4">
+                  <h6 class="font-weight-bold font-size-lg mb-1 text-black">Reviews & Ratings</h6>
+                </div>
+                <div class="divider"></div>
+                <div class="card-body pt-2 px-4 pb-4">
+                  <div class="table-responsive">
+                    <table class="table table-hover table-striped table-bordered mb-0">
+                      <thead>
+                      <tr>
+                        <th>Rating</th>
+                        <th>Review</th>
+                        <th>Date & Time</th>
+                        <th>User</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      <tr *ngFor="let val of ratingListReturnArray">
+                        <td>
+                          <bar-rating [(rate)]="val.rating" style="pointer-events: none;" [theme]="'rating-icons-default'"
+                                      class="rating-warning" [max]="5"></bar-rating>
+                        </td>
+                        <td>{{val.comment}}</td>
+                        <td>{{returnDateTime(val.dateTime)}}</td>
+                        <td>{{val.publicUserName}}</td>
+                      </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <pagination *ngIf="ratingTotalElement > 5" [boundaryLinks]="true"
+                               [rotate]="false"
+                               (pageChanged)="ratingPageChanged($event)"
+                               [itemsPerPage]="5"
+                               [maxSize]="3"
+                               [totalItems]="ratingTotalElement"  class="pagination-icons pagination-second"></pagination>
+                </div>
+              </div>
+              <div class="card card-box mb-5">
+                <div class="card-header-alt p-4">
+                  <h6 class="font-weight-bold font-size-lg mb-1 text-black">Packages</h6>
+                </div>
+                <div class="divider"></div>
+                <div class="card-body pt-2 px-4 pb-4">
+                  <div class="table-responsive">
+                    <table class="table table-hover table-striped table-bordered mb-0">
+                      <thead>
+                      <tr>
+                        <th class="bg-white" style="width: 20%;">Package Name</th>
+                        <th class="bg-white">Duration (Days)</th>
+                        <th class="bg-white">No of Slots</th>
+                        <th class="bg-white">Listed Price ({{currency}})</th>
+                        <th class="bg-white">Discounted Price</th>
+                        <th class="bg-white">No of Purchase</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      <tr *ngFor="let val of membershipReturnedArray">
+                        <td>
+                          {{val.name}}
+                        </td>
+                        <td> {{val.duration}}</td>
+                        <td>{{val.slotCount}}</td>
+                        <td>{{val.price}}</td>
+                        <td>{{val.discountedPrice}}</td>
+                        <td>{{val.numberOfPurchase}}</td>
+                      </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="card-footer py-3 d-flex justify-content-between">
+                    <pagination *ngIf="membershipTotalElement > 5" [boundaryLinks]="true"
+                                 [rotate]="false"
+                                 (pageChanged)="membershipPageChanged($event)"
+                                 [itemsPerPage]="5"
+                                 [maxSize]="3"
+                                 [totalItems]="membershipTotalElement"  class="pagination-icons pagination-second"></pagination>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
