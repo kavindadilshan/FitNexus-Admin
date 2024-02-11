@@ -1,0 +1,252 @@
+<div [class]="'app-page-title ' + globals.pageTitleStyle + ' ' + globals.pageTitleBackground"
+     [ngClass]="{
+    'app-page-title--shadow' : globals.pageTitleShadow
+    }">
+  <div>
+    <ol *ngIf="globals.pageTitleBreadcrumb" class="app-page-title--breadcrumb breadcrumb">
+      <li class="breadcrumb-item">
+        <a routerLink="/">
+          <fa-icon [icon]="['fas', 'tachometer-alt']"></fa-icon>
+        </a>
+      </li>
+      <li class="breadcrumb-item active">
+        <span>Create Fitness Class</span>
+      </li>
+    </ol>
+    <div class="app-page-title--first">
+      <div class="app-page-title--heading">
+        <h1>Create Fitness Class</h1>
+      </div>
+    </div>
+    <div class="d-flex align-items-center">
+      <span> Services / Fitness Classes / Create Fitness Class</span>
+    </div>
+    <div class="d-flex align-items-center">
+      <button (click)="backButtonRouting('back')" class="btn btn-sm text-nowrap m-2 btn-second" type="button">
+        <span class="d-none d-xl-block" style="color: white">Back</span>
+        <span className="btn-wrapper--icon">
+          <i class="ion-ios-arrow-back d-block d-xl-none"></i>
+                </span>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="card card-box">
+  <div class="card-header">
+    <div class="card-header--title">
+      <small>Fitness Class Details</small>
+      <b>{{name}}</b>
+    </div>
+  </div>
+  <form autocomplete="off" (keydown.enter)="$event.preventDefault()" name="createClassForm" [formGroup]="createClassForm">
+    <aw-wizard #wizardComponent class="wizard" navBarLocation="left">
+      <aw-wizard-step class="screen" stepTitle="Class Information" [navigationSymbol]="{ symbol: '1' }">
+        <div class="p-4" id="wizard1">
+          <h5 class="font-size-xl font-weight-bold">Class Information</h5>
+          <div class="form-row">
+            <div class="form-group col-md-12">
+              <label for="className">Class Name <span style="color: red">*</span></label>
+              <input class="form-control" (keypress)="disableSpecilaCharacters($event)" name="className" formControlName="className" id="className" placeholder="Class Name" type="text">
+            </div>
+            <div class="form-group col-md-12">
+              <label for="description">Description <span style="color: red">*</span></label>
+              <textarea (keyup)="checkCharacterLength();newLinePress($event)" maxlength="1000" name="description" formControlName="description" rows="3" class="form-control" id="description"
+                        placeholder="Description"></textarea>
+              <span><small><b>{{characterLength}}/1000 characters</b></small></span>
+            </div>
+            <div class="form-group col-md-12">
+              <label for="classType">Class Type <span style="color: red">*</span></label>
+              <ng-select id="classType"  formControlName="classType" >
+                <ng-option *ngFor="let val of classType" [value]="val.id">{{val.typeName}}</ng-option>
+              </ng-select>
+            </div>
+
+          </div>
+
+        </div>
+        <div class="actions p-4">
+          <button (click)="backButtonRouting('previous')" class="btn btn-primary" type="button">Cancel</button>
+          <button (click)="clickClassInformationWizard()" class="btn btn-success" type="button">Continue</button>
+        </div>
+      </aw-wizard-step>
+
+      <aw-wizard-step class="screen" awOptionalStep stepTitle="Gallery" [navigationSymbol]="{ symbol: '2' }">
+        <div class="p-4" id="wizard2">
+          <h5 class="font-size-xl font-weight-bold">Images</h5>
+          <!--        <p class="text-black-50 mb-4">Wonderful transition effects.</p>-->
+
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label for="className">Profile Image (800 x 800)<span style="color: red">*</span></label>
+              <ngx-img #ngimg class="file-multi" (onSelect)="onSelectProfileImage($event)" (onReset)="onResetProfileImage()"
+                       [config]="options" [text]="textOption"></ngx-img>
+            </div>
+            <div hidden style="left: 3%;padding-top: 45px;" id="profileImagePreview" class="form-group col-md-6">
+              <label>Preview</label>
+              <div class="d-flex flex-column flex-sm-row align-items-start">
+                <div>
+                  <div style="zoom: 22%" class="card card-transparent mb-3 mb-sm-0">
+                    <a class="card-img-wrapper rounded">
+                      <div class="img-wrapper-overlay">
+                        <div class="overlay-btn-wrapper">
+                        </div>
+                      </div>
+                      <img  class="card-img-top rounded"
+                            [src]='profileImage||"assets/images/no-image-available.png"' style="width: 800px;height: 800px">
+                    </a>
+                  </div>
+                </div>
+                <div style="padding-left: 2%;padding-top: 2%;">
+                  <button (click)="clear()" class="btn d-50 p-0 btn-pill m-2 btn-sm btn-danger"
+                          type="button">
+                <span class="btn-wrapper--icon" >
+                    <i style="transform: scale(2);" class="pe-7s-close"></i>
+                </span>
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label>Cover Images (max 3) (800 x 800)<span style="color: red">*</span></label>
+              <!--              <span style="color:#95a5a6">recommended image resolution (1476*964)</span>-->
+              <ngx-img #ngCoverImg class="file-multi" (onSelect)="onSelect($event)" (onReset)="onReset()"
+                       [config]="options" [text]="textOption"></ngx-img>
+            </div>
+            <div hidden style="left: 3%;padding-top: 45px;" id="imgPreviewTable" class="form-group col-md-6">
+              <label>Preview</label>
+              <div class="d-flex flex-column flex-sm-row align-items-start">
+                <div>
+                  <div style="zoom: 22%" class="card card-transparent mb-3 mb-sm-0">
+                    <a class="card-img-wrapper rounded">
+                      <div class="img-wrapper-overlay">
+                        <div class="overlay-btn-wrapper">
+                        </div>
+                      </div>
+                      <img  class="card-img-top rounded"
+                            [src]='base64Image||"assets/images/no-image-available.png"' style="width: 800px;height: 800px">
+                    </a>
+                  </div>
+                </div>
+                <div style="padding-left: 2%;padding-top: 2%;">
+                  <button  (click)="addCoverImages(base64Image)" class="btn d-50 p-0 btn-pill m-2 btn-sm btn-success"
+                           type="button">
+                <span class="btn-wrapper--icon" >
+                    <i style="transform: scale(2);" class="pe-7s-check"></i>
+                </span>
+                  </button>
+                  <br>
+                  <button  (click)="onResetCover()" class="btn d-50 p-0 btn-pill m-2 btn-sm btn-danger"
+                           type="button">
+                <span class="btn-wrapper--icon" >
+                    <i style="transform: scale(2);" class="pe-7s-close"></i>
+                </span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <hr>
+            <div id="imgTable" class="form-group col-md-12">
+              <div class="table-responsive">
+                <table class="table table-hover text-nowrap table-borderless mb-0">
+                  <tbody>
+                  <tr *ngFor="let status of images">
+                    <td style="width: 15%">
+                      <img style='display:block;border: 2px dashed  #3C44B1;
+                          border-radius: 5px; width:100px;height:80px;' id='base'
+                           [src]='status.img||"assets/images/no-image-available.png"'/>
+                    </td>
+                    <td disabled="true">
+                      <div class="gauge-wrapper" style="height: 75px">
+                        <circle-progress style="pointer-events: none;"
+                                         [percent]="100"
+                                         [radius]="100"
+                                         [outerStrokeWidth]="14"
+                                         [innerStrokeWidth]="11"
+                                         [outerStrokeColor]="'var(--success)'"
+                                         [innerStrokeColor]="'var(--secondary)'"
+                                         [animation]="true"
+                                         [responsive]="true"
+                                         [showSubtitle]="false"
+                                         [titleFontSize]="42"
+                                         [unitsFontSize]="29"
+                                         [showBackground]="false"
+                                         [showSubtitle]="false"
+                                         [animationDuration]="2000"
+                        ></circle-progress>
+                      </div>
+                    </td>
+                    <td>
+                      <button (click)="removeImageList(status.img)" class="btn d-50 p-0 btn-pill m-2 btn-danger"
+                              type="button">
+                <span class="btn-wrapper--icon">
+                    <i class="ion-md-trash"></i>
+                </span>
+                      </button>
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="actions p-4">
+          <button (click)="autoScrollClassInformationWizard()" awPreviousStep class="btn btn-primary" type="button">Previous Step</button>
+          <button (click)="clickGalleryWizard()" class="btn btn-success" type="button">Continue
+          </button>
+        </div>
+      </aw-wizard-step>
+      <aw-wizard-step class="screen" stepTitle="More Info" [navigationSymbol]="{ symbol: '3' }">
+        <div class="p-4" id="wizard3">
+          <h5 class="font-size-xl font-weight-bold">More Information</h5>
+          <div class="form-row">
+            <div class="form-group col-md-12">
+              <label>List of Trainers <span style="color: red">*</span></label>
+              <ng-select id="trainer"  formControlName="trainer" [multiple]="true">
+                <ng-option *ngFor="let val of trainers" [value]="val.id">{{val.name}}</ng-option>
+              </ng-select>
+            </div>
+            <div class="form-group col-md-12">
+              <label for="howToPrepare">How To Prepare <span style="color: red">*</span></label>
+              <textarea maxlength="1000" (keyup)="checkLength();prepareDescriptionNewLine($event)" name="howToPrepare" formControlName="howToPrepare" rows="3" class="form-control" id="howToPrepare"
+                        placeholder="How To Prepare"></textarea>
+              <span><small><b>{{textLength}}/1000 characters</b></small></span>
+            </div>
+            <div class="form-group col-md-12">
+              <label for="calorieBurnOut">Calorie Burn Out</label>
+              <input class="form-control" (keypress)="numberOnly($event);" name="calorieBurnOut" formControlName="calorieBurnOut" id="calorieBurnOut" placeholder="Calorie Burn Out" type="text">
+            </div>
+            <div class="form-group col-12">
+              <label>First Session Free <span style="color: red">*</span></label>
+              <div id="subscriptionPackge">
+                <br>
+                <div class="custom-radio custom-control mb-3">
+                  <input (change)="checkPackgeModel($event)" [value]="true" class="custom-control-input" id="exampleCustomRadio"
+                         name="customRadio"
+                         type="radio" checked><label
+                  class="custom-control-label" for="exampleCustomRadio">Yes</label></div>
+                <div class="custom-radio custom-control mb-3"><input (change)="checkPackgeModel($event)" [value]="false" class="custom-control-input" id="exampleCustomRadio2"
+                                                                     name="customRadio"
+                                                                     type="radio">
+                  <label class="custom-control-label" for="exampleCustomRadio2">No</label></div>
+              </div>
+            </div>
+              <div class="form-group col-md-12">
+                <label for="description" class="font-weight-bold">Video URL</label>
+                <input  class="form-control" name="videoURl" formControlName="videoURl" id="videoURl"
+                       placeholder="Video URL" type="text">
+            </div>
+          </div>
+        </div>
+        <div class="actions p-4">
+          <button (click)="autoScrollGalleryWizard()" awPreviousStep [awGoToStep]="{stepIndex: 2}" class="btn btn-primary" type="button">Previous</button>
+          <button id="finishButton" data-style="slide-down" data-spinner-size="30" [ladda]="isLoading" (click)="createClass()"  class="btn btn-success" type="button">Finish</button>
+        </div>
+      </aw-wizard-step>
+    </aw-wizard>
+  </form>
+</div>
