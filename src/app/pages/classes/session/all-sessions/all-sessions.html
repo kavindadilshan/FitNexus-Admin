@@ -1,0 +1,1303 @@
+<div [class]="'app-page-title ' + globals.pageTitleStyle + ' ' + globals.pageTitleBackground"
+     [ngClass]="{
+    'app-page-title--shadow' : globals.pageTitleShadow
+    }">
+  <div>
+    <ol *ngIf="globals.pageTitleBreadcrumb" class="app-page-title--breadcrumb breadcrumb">
+      <li class="breadcrumb-item">
+        <a routerLink="/">
+          <fa-icon [icon]="['fas', 'tachometer-alt']"></fa-icon>
+        </a>
+      </li>
+      <li class="breadcrumb-item active">
+        <span>Service Summary</span>
+      </li>
+    </ol>
+    <div class="app-page-title--first">
+      <div class="app-page-title--heading">
+        <h1>Service Summary</h1>
+      </div>
+    </div>
+    <div class="d-flex align-items-center">
+      <span> Services / Service Summary</span>
+    </div>
+  </div>
+</div>
+<div class="card card-box mb-5">
+  <div class="card-body">
+    <form autocomplete="off" (keydown.enter)="$event.preventDefault()" name="filterForm"
+          [formGroup]="filterForm">
+      <div class="row">
+        <div class="position-relative form-group screen">
+          &nbsp;&nbsp;
+          <div class="custom-radio custom-control mb-3 custom-control-inline">
+            <input value="PHYSICAL" (change)="getSelectedValue($event);" class="custom-control-input"
+                   id="fitness_class" name="customRadio" type="radio" checked><label
+            class="custom-control-label" for="fitness_class">Fitness Class</label></div>
+          <div class="custom-radio custom-control mb-3 custom-control-inline">
+            <input (change)="getSelectedValue($event);" value="GROUP" name="customRadio"
+                   class="custom-control-input" id="group_class" type="radio"><label
+            class="custom-control-label" for="group_class">Online Group Class</label></div>
+          <div class="custom-radio custom-control mb-3 custom-control-inline">
+            <input (change)="getSelectedValue($event);" value="PERSONAL" class="custom-control-input"
+                   name="customRadio" id="personal_class" type="radio"><label
+            class="custom-control-label" for="personal_class">Online One to One</label></div>
+          <div class="custom-radio custom-control mb-3 custom-control-inline">
+            <input (change)="getSelectedValue($event);" class="custom-control-input"
+                   id="gym"
+                   value="GYM"
+                   name="customRadio"
+                   type="radio"><label
+            class="custom-control-label" for="gym">Gym</label></div>
+          <div class="custom-radio custom-control mb-4 custom-control-inline"><input
+            (change)="getSelectedValue($event);" class="custom-control-input"
+            id="online-coaching"
+            name="customRadio"
+            value="ONLINE_COACHING"
+            type="radio"><label
+            class="custom-control-label" for="online-coaching">Online Coaching</label></div>
+        </div>
+      </div>
+      <div id="dateRange1" [hidden]="isDateRange1" class="position-relative row form-group">
+        <label class="col-sm-2 col-form-label font-weight-bold" >Select Date:</label>
+        <div class="col-sm-3" style="right: 52px">
+          <input (keydown)="eventHandler($event)" name="date" id="date" formControlName="date" #dp1="bsDatepicker" [bsConfig]="bsConfig" bsDatepicker class="form-control" placeholder="Select date" type="text">
+        </div>
+        <div style="right: 48px" class="form-group col-md-2">
+          <button (click)="filterResult(page)" style="height: 38px;" class="btn btn-sm btn-warning" type="button">
+            Filter
+          </button>
+        </div>
+      </div>
+      <div id="dateRange2" [hidden]="isDateRange2" class="position-relative row form-group">
+        <label class="col-sm-2 col-form-label font-weight-bold" >Select Date Range:</label>
+        <div class="col-sm-3" style="right: 30px">
+          <input (keydown)="eventHandler($event)" id="dateRange" (bsValueChange)="getChangeValue($event)"
+                 [(ngModel)]="bsInlineRangeValue" [bsConfig]="bsConfig" formControlName="dateRange"
+                 bsDaterangepicker class="form-control" placeholder="Select date " type="text">
+        </div>
+        <div style="right: 48px" class="form-group col-md-2">
+          <button (click)="filterMembershipResult(page)" style="height: 38px;" class="btn btn-sm btn-warning" type="button">
+            Filter
+          </button>
+        </div>
+      </div>
+    </form>
+
+    <div class="divider"></div>
+    <div id="table1" [hidden]="table1">
+    <div class="table-responsive screen">
+      <table class="table table-hover table-striped table-bordered mb-0">
+        <thead>
+        <tr>
+          <th class="bg-white">Time</th>
+          <th class="bg-white">Class</th>
+          <th class="bg-white">Coach</th>
+          <th class="bg-white">CURRENT ENROLLMENTS / MAX LIMIT</th>
+          <th class="bg-white">Status</th>
+          <th class="bg-white">More Info</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let val of returnedArray">
+          <td>{{returnTime(val.dateTime)}}</td>
+          <td>{{val.className}}</td>
+          <td>{{val.trainerName}}</td>
+          <td class="text-center">{{val.numberOfEnrollments + " / " + val.maxJoiners}}</td>
+          <td class="text-center">
+            <span class="badge bg-neutral-success text-warning"
+                  *ngIf="val['status'] === 'PENDING' && currentDateTime < returnDateTime(val.dateTime)">upcoming</span>
+            <span class="badge bg-neutral-success text-success"
+                  *ngIf="val['status'] === 'PENDING' && currentDateTime > returnDateTime(val.dateTime) && classType === 'PHYSICAL'">completed</span>
+            <span class="badge bg-neutral-success text-black"
+                  *ngIf="val['status'] === 'PENDING' && currentDateTime > returnDateTime(val.dateTime) && classType !== 'PHYSICAL'">past</span>
+            <span class="badge bg-neutral-success text-danger" *ngIf="val['status'] === 'CANCELLED'">cancelled</span>
+            <span class="badge bg-neutral-success text-primary"
+                  *ngIf="val['status'] === 'ONGOING'&& currentDateTime < returnDateTime(val.dateTime)">ongoing</span>
+            <span class="badge bg-neutral-success text-success"
+                  *ngIf="val['status'] === 'ONGOING'&& currentDateTime > returnDateTime(val.dateTime)">completed</span>
+            <span class="badge bg-neutral-success text-success" *ngIf="val['status'] === 'FINISHED'">finished</span>
+          </td>
+          <td>
+            <button (click)="openMoreInfoModel(val)" class="btn m-2 btn-pill btn-first" type="button">View</button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card-footer screen py-3 d-flex justify-content-between">
+      <pagination *ngIf="totalElement > 10" [boundaryLinks]="true"
+                  [rotate]="false"
+                  (pageChanged)="SessionTableChange($event)"
+                  [itemsPerPage]="size"
+                  [maxSize]="3"
+                  [totalItems]="totalElement" class="pagination-icons pagination-second"></pagination>
+    </div>
+    </div>
+    <div id="table2" [hidden]="table2">
+      <div class="table-responsive screen">
+        <table class="table table-hover table-striped table-bordered mb-0">
+          <thead>
+          <tr>
+            <th class="bg-white">Student</th>
+            <th class="bg-white">Gym</th>
+            <th class="bg-white">Membership</th>
+            <th class="bg-white">Type</th>
+            <th class="bg-white">Expiration Date</th>
+            <th class="bg-white">More Info</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let val of gymMembershipReturnedArray">
+            <td>{{val.publicUserFirstName + " " + val.publicUserLastName}}</td>
+            <td>{{val.gymName}}</td>
+            <td>{{val.membershipName}}</td>
+            <td>{{val.type}}</td>
+            <td>{{returnDate(val.expireDateTime)}}</td>
+            <td>
+              <button (click)="openGymMoreInfoModel(val)" class="btn m-2 btn-pill btn-first" type="button">View</button>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card-footer screen py-3 d-flex justify-content-between">
+        <pagination *ngIf="gymMembershipTotalElement > 10" [boundaryLinks]="true"
+                    [rotate]="false"
+                    (pageChanged)="gymMembershipTableChange($event)"
+                    [itemsPerPage]="size"
+                    [maxSize]="3"
+                    [totalItems]="gymMembershipTotalElement" class="pagination-icons pagination-second"></pagination>
+      </div>
+    </div>
+    <div id="table3" [hidden]="table3">
+      <div class="table-responsive screen">
+        <table class="table table-hover table-striped table-bordered mb-0">
+          <thead>
+          <tr>
+            <th class="bg-white">Student</th>
+            <th class="bg-white">Package</th>
+            <th class="bg-white">Coach</th>
+            <th class="bg-white">Status</th>
+            <th class="bg-white">Expiration Date</th>
+            <th class="bg-white">More Info</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let val of onlineCoachingReturnedArray">
+            <td>{{val.studentFirstName + " " +val.studentLastName}}</td>
+            <td>{{val.packageName}}</td>
+            <td>{{val.instructorFirstName + " " +val.instructorLastName}}</td>
+            <td>
+              <span class="badge bg-neutral-success text-success"
+                    *ngIf="val['status'] === 'ACTIVE'">active</span>
+            </td>
+            <td>{{returnDate(val.expireDateTime)}}</td>
+            <td>
+              <button (click)="onlineCoachingMoreInfoModal(val)" class="btn m-2 btn-pill btn-first" type="button">View</button>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card-footer screen py-3 d-flex justify-content-between">
+        <pagination *ngIf="onlineCoachingTotalElement > 10" [boundaryLinks]="true"
+                    [rotate]="false"
+                    (pageChanged)="onlineCoachingTableChange($event)"
+                    [itemsPerPage]="size"
+                    [maxSize]="3"
+                    [totalItems]="onlineCoachingTotalElement" class="pagination-icons pagination-second"></pagination>
+      </div>
+    </div>
+  </div>
+</div>
+<div bsModal #moreInfoModal="bs-modal" class="modal fade screen" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content border-0 bg-transparent">
+      <div class="row no-gutters">
+        <div class="col-lg-12">
+          <div class="bg-white rounded-left rounded-right">
+            <div class="modal-header">
+              <button type="button" class="close" aria-label="Close" (click)="moreInfoModal.hide()">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form autocomplete="off" (keydown.enter)="$event.preventDefault()" name="moreInfoForm" [formGroup]="moreInfoForm">
+                <div class="card card-box mb-5">
+                  <div class="card-header-alt p-4">
+                    <h6 class="font-weight-bold font-size-lg mb-1 text-black">Personal Details</h6>
+                  </div>
+                  <div class="divider"></div>
+                  <div class="card-body pt-2 px-4 pb-4">
+                    <div class="form-row">
+                      <div class="col-md-6">
+                        <div class="position-relative row form-group">
+                          <label class="col-sm-3 col-form-label font-weight-bold" for="firstName">First Name</label>
+                          <div class="col-sm-8">
+                            <input readonly class="form-control" formControlName="firstName" id="firstName" name="firstName"
+                                   placeholder="First Name" type="text"></div>
+                        </div>
+                        <div class="position-relative row form-group"><label class="col-sm-3 col-form-label font-weight-bold"
+                                                                             for="email">Email</label>
+                          <div class="col-sm-8"><input readonly class="form-control" formControlName="email" id="email" name="email"
+                                                       placeholder="Email" type="text"></div>
+                        </div>
+                        <div class="position-relative row form-group">
+                          <label class="col-sm-3 col-form-label font-weight-bold"
+                                 for="dob">Date of Birth</label>
+                          <div class="col-sm-8">
+                            <input readonly formControlName="dob" class="form-control" id="dob" name="dob"
+                                   placeholder="Date of Birth" type="text"></div>
+                        </div>
+                        <div class="position-relative row form-group">
+                          <label class="col-sm-3 col-form-label font-weight-bold">Profile Image</label>
+                          <div class="col-sm-8">
+                            <div class="d-flex flex-column flex-sm-row align-items-start">
+                              <div>
+                                <div class="card card-transparent mb-3 mb-sm-0">
+                                  <a  class="card-img-wrapper rounded">
+                                    <div class="img-wrapper-overlay">
+                                      <div class="overlay-btn-wrapper">
+                                      </div>
+                                    </div>
+                                    <img  class="card-img-top rounded" id="profileImage"
+                                          src="assets/images/no-image-available.png" style="object-fit: cover;width: 250px;height: 200px">
+                                  </a>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="position-relative row form-group"><label class="col-sm-4 col-form-label font-weight-bold"
+                                                                             for="lastName">Last Name</label>
+                          <div class="col-sm-8"><input readonly class="form-control" formControlName="lastName" id="lastName" name="lastName"
+                                                       placeholder="Last Name" type="text"></div>
+                        </div>
+                        <div class="position-relative row form-group"><label class="col-sm-4 col-form-label font-weight-bold"
+                                                                             for="mobileNo">Mobile Number</label>
+                          <div class="col-sm-8"><input readonly class="form-control" formControlName="mobileNo" id="mobileNo" name="mobileNo"
+                                                       placeholder="Mobile Number" type="text"></div>
+                        </div>
+                        <div class="position-relative row form-group"><label class="col-sm-4 col-form-label font-weight-bold"
+                                                                             for="gender">Gender</label>
+                          <div class="col-sm-8"><input readonly class="form-control" formControlName="gender" id="gender" name="gender"
+                                                       placeholder="Gender" type="text"></div>
+                        </div>
+                        <div class="position-relative row form-group"><label class="col-sm-4 col-form-label font-weight-bold"
+                                                                             for="height">Height (cm)</label>
+                          <div class="col-sm-8"><input readonly class="form-control" formControlName="height" id="height" name="height"
+                                                       placeholder="Height(cm)" type="text"></div>
+                        </div>
+                        <div class="position-relative row form-group"><label class="col-sm-4 col-form-label font-weight-bold"
+                                                                             for="weight">Weight (kg)</label>
+                          <div class="col-sm-8"><input readonly class="form-control" formControlName="weight" id="weight" name="weight"
+                                                       placeholder="Weight (kg)" type="text"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </form>
+              <div class="card card-box mb-5">
+                <div class="card-header-alt p-4">
+                  <h6 class="font-weight-bold font-size-lg mb-1 text-black">Fitness Class Session Enrollments</h6>
+                </div>
+                <div class="divider"></div>
+                <div class="card-body pt-2 px-4 pb-4">
+                  <div class="table-responsive">
+                    <table class="table table-hover table-striped table-bordered mb-0">
+                      <thead>
+                      <tr>
+                        <th>Business Profile</th>
+                        <th>Class</th>
+                        <th>Coach Name</th>
+                        <th>Session Name</th>
+                        <th style="width: 10%">Enroll Date</th>
+                        <th>Session Date & Time</th>
+                        <th>Paid Amount ({{currency}})</th>
+                        <th>Payment Status</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      <tr *ngFor="let val of physicalSessionReturnedArray">
+                        <td>{{val.businessProfileName}}</td>
+                        <td>{{val.className}}</td>
+                        <td>{{val.coachName}}</td>
+                        <td>{{val.classSessionName}}</td>
+                        <td>{{returnDate(val.enrollDateTime)}}</td>
+                        <td>{{returnDateTime(val.sessionDateTime)}}</td>
+                        <td>{{val.paidAmount}}</td>
+                        <td>{{val.paymentStatus}}</td>
+                      </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="card-footer py-3 d-flex justify-content-between">
+                    <pagination *ngIf="physicalSessionTotalElement > 5" [boundaryLinks]="true"
+                                [rotate]="false"
+                                (pageChanged)="physicalSessionEnrollmentPageChange($event)"
+                                [itemsPerPage]="5"
+                                [maxSize]="3"
+                                [totalItems]="physicalSessionTotalElement"  class="pagination-icons pagination-second"></pagination>
+                  </div>
+                </div>
+              </div>
+              <div class="card card-box mb-5">
+                <div class="card-header-alt p-4">
+                  <h6 class="font-weight-bold font-size-lg mb-1 text-black">Fitness Class Membership Enrollments</h6>
+                </div>
+                <div class="divider"></div>
+                <div class="card-body pt-2 px-4 pb-4">
+                  <div class="table-responsive">
+                    <table class="table table-hover table-striped table-bordered mb-0">
+                      <thead>
+                      <tr>
+                        <th>Business Profile</th>
+                        <th>Membership</th>
+                        <th>Type</th>
+                        <th>Class Name</th>
+                        <th style="width: 10%">Enroll Date</th>
+                        <th style="width: 10%">Expire Date</th>
+                        <th>Paid Amount ({{currency}})</th>
+                        <th>Payment Status</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      <tr *ngFor="let val of physicalClassMembershipReturnedArray">
+                        <td>{{val.businessProfileName}}</td>
+                        <td>{{val.membershipName}}</td>
+                        <td>{{val.membershipType}}</td>
+                        <td>{{val.classNames}}</td>
+                        <td>{{returnDate(val.enrollDateTime)}}</td>
+                        <td>{{returnDate(val.expireDateTime)}}</td>
+                        <td>{{val.paidAmount}}</td>
+                        <td>{{val.paymentStatus}}</td>
+                      </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="card-footer py-3 d-flex justify-content-between">
+                    <pagination *ngIf="physicalClassMembershipTotalElement > 5" [boundaryLinks]="true"
+                                [rotate]="false"
+                                (pageChanged)="physicalClassMembershipEnrollmentPageChange($event)"
+                                [itemsPerPage]="5"
+                                [maxSize]="3"
+                                [totalItems]="physicalClassMembershipTotalElement"  class="pagination-icons pagination-second"></pagination>
+                  </div>
+                </div>
+              </div>
+              <div class="card card-box mb-5">
+                <div class="card-header-alt p-4">
+                  <h6 class="font-weight-bold font-size-lg mb-1 text-black">Online Personal Class Enrollments</h6>
+                </div>
+                <div class="divider"></div>
+                <div class="card-body pt-2 px-4 pb-4">
+                  <div class="table-responsive">
+                    <table class="table table-hover table-striped table-bordered mb-0">
+                      <thead>
+                      <tr>
+                        <th>Class Name</th>
+                        <th>Type</th>
+                        <th>Session Name</th>
+                        <th>Date & Time</th>
+                        <th>Coach</th>
+                        <th>Studio Name</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      <tr *ngFor="let val of personalClassSessionEnrollments">
+                        <td>{{val.className}}</td>
+                        <td>{{val.classType}}</td>
+                        <td>{{val.classSessionName}}</td>
+                        <td>{{returnDateTime(val.sessionDateTime)}}</td>
+                        <td>{{val.coachName}}</td>
+                        <td>{{val.businessProfileName}}</td>
+                      </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="card-footer py-3 d-flex justify-content-between">
+                    <pagination *ngIf="personalClassSessionTotalElement > 5" [boundaryLinks]="true"
+                                [rotate]="false"
+                                (pageChanged)="personalClassSessionEnrollmentPageChange($event)"
+                                [itemsPerPage]="5"
+                                [maxSize]="3"
+                                [totalItems]="personalClassSessionTotalElement"  class="pagination-icons pagination-second"></pagination>
+                  </div>
+                </div>
+              </div>
+              <div class="card card-box mb-5">
+                <div class="card-header-alt p-4">
+                  <h6 class="font-weight-bold font-size-lg mb-1 text-black">Online Group Class Enrollments</h6>
+                </div>
+                <div class="divider"></div>
+                <div class="card-body pt-2 px-4 pb-4">
+                  <div class="table-responsive">
+                    <table class="table table-hover table-striped table-bordered mb-0">
+                      <thead>
+                      <tr>
+                        <th>Class Name</th>
+                        <th>Type</th>
+                        <th>Session Name</th>
+                        <th>Date & Time</th>
+                        <th>Coach</th>
+                        <th>Studio Name</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      <tr *ngFor="let val of classReturnedArray">
+                        <td>{{val.className}}</td>
+                        <td>{{val.classType}}</td>
+                        <td>{{val.classSessionName}}</td>
+                        <td>{{returnDateTime(val.sessionDateTime)}}</td>
+                        <td>{{val.coachName}}</td>
+                        <td>{{val.businessProfileName}}</td>
+                      </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="card-footer py-3 d-flex justify-content-between">
+                    <pagination *ngIf="classTotalElement > 5" [boundaryLinks]="true"
+                                [rotate]="false"
+                                (pageChanged)="classEnrollmentPageChange($event)"
+                                [itemsPerPage]="5"
+                                [maxSize]="3"
+                                [totalItems]="classTotalElement"  class="pagination-icons pagination-second"></pagination>
+                  </div>
+                </div>
+              </div>
+              <div class="card card-box mb-5">
+                <div class="card-header-alt p-4">
+                  <h6 class="font-weight-bold font-size-lg mb-1 text-black">Online Personal Coaching Enrollments</h6>
+                </div>
+                <div class="divider"></div>
+                <div class="card-body pt-2 px-4 pb-4">
+                  <div class="table-responsive">
+                    <table class="table table-hover table-striped table-bordered mb-0">
+                      <thead>
+                      <tr>
+                        <th>Coach Name</th>
+                        <th>Package</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Studio Name</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      <tr *ngFor="let val of instructorReturnedArray">
+                        <td>{{val.instructorName}}</td>
+                        <td>{{val.instructorPackageName}}</td>
+                        <td>{{returnDate(val.enrollDateTime)}}</td>
+                        <td>{{returnDate(val.expireDateTime)}}</td>
+                        <td>{{val.businessProfileName}}</td>
+                      </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="card-footer py-3 d-flex justify-content-between">
+                    <pagination *ngIf="instructorTotalElement > 5" [boundaryLinks]="true"
+                                [rotate]="false"
+                                (pageChanged)="instructorEnrollmentPageChange($event)"
+                                [itemsPerPage]="5"
+                                [maxSize]="3"
+                                [totalItems]="instructorTotalElement"  class="pagination-icons pagination-second"></pagination>
+                  </div>
+                </div>
+              </div>
+              <div class="card card-box mb-5">
+                <div class="card-header-alt p-4">
+                  <h6 class="font-weight-bold font-size-lg mb-1 text-black">Gym Membership Enrollments</h6>
+                </div>
+                <div class="divider"></div>
+                <div class="card-body pt-2 px-4 pb-4">
+                  <div class="table-responsive">
+                    <table class="table table-hover table-striped table-bordered mb-0">
+                      <thead>
+                      <tr>
+                        <th>Business Profile</th>
+                        <th>Gym</th>
+                        <th>Membership</th>
+                        <th>Type</th>
+                        <th style="width: 10%">Enroll Date</th>
+                        <th style="width: 10%">Expire Date</th>
+                        <th>Paid Amount ({{currency}})</th>
+                        <th>Payment Status</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      <tr *ngFor="let val of gymMembershipEnrollmentReturnedArray">
+                        <td>{{val.businessProfileName}}</td>
+                        <td>{{val.gymName}}</td>
+                        <td>{{val.membershipName}}</td>
+                        <td>{{val.membershipType}}</td>
+                        <td>{{returnDate(val.enrollDateTime)}}</td>
+                        <td>{{returnDate(val.expireDateTime)}}</td>
+                        <td>{{val.paidAmount}}</td>
+                        <td>{{val.paymentStatus}}</td>
+                      </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="card-footer py-3 d-flex justify-content-between">
+                    <pagination *ngIf="gymMembershipEnrollmentTotalElement > 5" [boundaryLinks]="true"
+                                [rotate]="false"
+                                (pageChanged)="gymMembershipEnrollmentPageChange($event)"
+                                [itemsPerPage]="5"
+                                [maxSize]="3"
+                                [totalItems]="gymMembershipEnrollmentTotalElement"  class="pagination-icons pagination-second"></pagination>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div bsModal #gymMoreInfoModal="bs-modal" class="modal fade screen" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content border-0 bg-transparent">
+      <div class="row no-gutters">
+        <div class="col-lg-12">
+          <div class="bg-white rounded-left rounded-right">
+            <div class="modal-header">
+              <button type="button" class="close" aria-label="Close" (click)="gymMoreInfoModal.hide()">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form autocomplete="off" (keydown.enter)="$event.preventDefault()" name="moreInfoForm" [formGroup]="gymMoreInfoForm">
+                <div class="card card-box mb-5">
+                  <div class="card-header-alt p-4">
+                    <h6 class="font-weight-bold font-size-lg mb-1 text-black">Personal Details</h6>
+                  </div>
+                  <div class="divider"></div>
+                  <div class="card-body pt-2 px-4 pb-4">
+                    <div class="form-row">
+                      <div class="col-md-6">
+                        <div class="position-relative row form-group">
+                          <label class="col-sm-3 col-form-label font-weight-bold" for="firstName">First Name</label>
+                          <div class="col-sm-8">
+                            <input readonly class="form-control" formControlName="firstName" id="firstName" name="firstName"
+                                   placeholder="First Name" type="text"></div>
+                        </div>
+                        <div class="position-relative row form-group"><label class="col-sm-3 col-form-label font-weight-bold"
+                                                                             for="email">Email</label>
+                          <div class="col-sm-8"><input readonly class="form-control" formControlName="email" id="email" name="email"
+                                                       placeholder="Email" type="text"></div>
+                        </div>
+                        <div class="position-relative row form-group">
+                          <label class="col-sm-3 col-form-label font-weight-bold"
+                                 for="dob">Date of Birth</label>
+                          <div class="col-sm-8">
+                            <input readonly formControlName="dob" class="form-control" id="dob" name="dob"
+                                   placeholder="Date of Birth" type="text"></div>
+                        </div>
+                        <div class="position-relative row form-group">
+                          <label class="col-sm-3 col-form-label font-weight-bold">Profile Image</label>
+                          <div class="col-sm-8">
+                            <div class="d-flex flex-column flex-sm-row align-items-start">
+                              <div>
+                                <div class="card card-transparent mb-3 mb-sm-0">
+                                  <a  class="card-img-wrapper rounded">
+                                    <div class="img-wrapper-overlay">
+                                      <div class="overlay-btn-wrapper">
+                                      </div>
+                                    </div>
+                                    <img  class="card-img-top rounded" id="gymUserProfileImage"
+                                          src="assets/images/no-image-available.png" style="object-fit: cover;width: 250px;height: 200px">
+                                  </a>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="position-relative row form-group"><label class="col-sm-4 col-form-label font-weight-bold"
+                                                                             for="lastName">Last Name</label>
+                          <div class="col-sm-8"><input readonly class="form-control" formControlName="lastName" id="lastName" name="lastName"
+                                                       placeholder="Last Name" type="text"></div>
+                        </div>
+                        <div class="position-relative row form-group"><label class="col-sm-4 col-form-label font-weight-bold"
+                                                                             for="mobileNo">Mobile Number</label>
+                          <div class="col-sm-8"><input readonly class="form-control" formControlName="mobileNo" id="mobileNo" name="mobileNo"
+                                                       placeholder="Mobile Number" type="text"></div>
+                        </div>
+                        <div class="position-relative row form-group"><label class="col-sm-4 col-form-label font-weight-bold"
+                                                                             for="gender">Gender</label>
+                          <div class="col-sm-8"><input readonly class="form-control" formControlName="gender" id="gender" name="gender"
+                                                       placeholder="Gender" type="text"></div>
+                        </div>
+                        <div class="position-relative row form-group"><label class="col-sm-4 col-form-label font-weight-bold"
+                                                                             for="height">Height (cm)</label>
+                          <div class="col-sm-8"><input readonly class="form-control" formControlName="height" id="height" name="height"
+                                                       placeholder="Height(cm)" type="text"></div>
+                        </div>
+                        <div class="position-relative row form-group"><label class="col-sm-4 col-form-label font-weight-bold"
+                                                                             for="weight">Weight (kg)</label>
+                          <div class="col-sm-8"><input readonly class="form-control" formControlName="weight" id="weight" name="weight"
+                                                       placeholder="Weight (kg)" type="text"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </form>
+              <div class="card card-box mb-5">
+                <div class="card-header-alt p-4">
+                  <h6 class="font-weight-bold font-size-lg mb-1 text-black">Fitness Class Session Enrollments</h6>
+                </div>
+                <div class="divider"></div>
+                <div class="card-body pt-2 px-4 pb-4">
+                  <div class="table-responsive">
+                    <table class="table table-hover table-striped table-bordered mb-0">
+                      <thead>
+                      <tr>
+                        <th>Business Profile</th>
+                        <th>Class</th>
+                        <th>Coach Name</th>
+                        <th>Session Name</th>
+                        <th style="width: 10%">Enroll Date</th>
+                        <th>Session Date & Time</th>
+                        <th>Paid Amount ({{currency}})</th>
+                        <th>Payment Status</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      <tr *ngFor="let val of physicalSessionReturnedArray">
+                        <td>{{val.businessProfileName}}</td>
+                        <td>{{val.className}}</td>
+                        <td>{{val.coachName}}</td>
+                        <td>{{val.classSessionName}}</td>
+                        <td>{{returnDate(val.enrollDateTime)}}</td>
+                        <td>{{returnDateTime(val.sessionDateTime)}}</td>
+                        <td>{{val.paidAmount}}</td>
+                        <td>{{val.paymentStatus}}</td>
+                      </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="card-footer py-3 d-flex justify-content-between">
+                    <pagination *ngIf="physicalSessionTotalElement > 5" [boundaryLinks]="true"
+                                [rotate]="false"
+                                (pageChanged)="physicalSessionEnrollmentPageChange($event)"
+                                [itemsPerPage]="5"
+                                [maxSize]="3"
+                                [totalItems]="physicalSessionTotalElement"  class="pagination-icons pagination-second"></pagination>
+                  </div>
+                </div>
+              </div>
+              <div class="card card-box mb-5">
+                <div class="card-header-alt p-4">
+                  <h6 class="font-weight-bold font-size-lg mb-1 text-black">Fitness Class Membership Enrollments</h6>
+                </div>
+                <div class="divider"></div>
+                <div class="card-body pt-2 px-4 pb-4">
+                  <div class="table-responsive">
+                    <table class="table table-hover table-striped table-bordered mb-0">
+                      <thead>
+                      <tr>
+                        <th>Business Profile</th>
+                        <th>Membership</th>
+                        <th>Type</th>
+                        <th>Class Name</th>
+                        <th style="width: 10%">Enroll Date</th>
+                        <th style="width: 10%">Expire Date</th>
+                        <th>Paid Amount ({{currency}})</th>
+                        <th>Payment Status</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      <tr *ngFor="let val of physicalClassMembershipReturnedArray">
+                        <td>{{val.businessProfileName}}</td>
+                        <td>{{val.membershipName}}</td>
+                        <td>{{val.membershipType}}</td>
+                        <td>{{val.classNames}}</td>
+                        <td>{{returnDate(val.enrollDateTime)}}</td>
+                        <td>{{returnDate(val.expireDateTime)}}</td>
+                        <td>{{val.paidAmount}}</td>
+                        <td>{{val.paymentStatus}}</td>
+                      </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="card-footer py-3 d-flex justify-content-between">
+                    <pagination *ngIf="physicalClassMembershipTotalElement > 5" [boundaryLinks]="true"
+                                [rotate]="false"
+                                (pageChanged)="physicalClassMembershipEnrollmentPageChange($event)"
+                                [itemsPerPage]="5"
+                                [maxSize]="3"
+                                [totalItems]="physicalClassMembershipTotalElement"  class="pagination-icons pagination-second"></pagination>
+                  </div>
+                </div>
+              </div>
+              <div class="card card-box mb-5">
+                <div class="card-header-alt p-4">
+                  <h6 class="font-weight-bold font-size-lg mb-1 text-black">Online Personal Class Enrollments</h6>
+                </div>
+                <div class="divider"></div>
+                <div class="card-body pt-2 px-4 pb-4">
+                  <div class="table-responsive">
+                    <table class="table table-hover table-striped table-bordered mb-0">
+                      <thead>
+                      <tr>
+                        <th>Class Name</th>
+                        <th>Type</th>
+                        <th>Session Name</th>
+                        <th>Date & Time</th>
+                        <th>Coach</th>
+                        <th>Studio Name</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      <tr *ngFor="let val of personalClassSessionEnrollments">
+                        <td>{{val.className}}</td>
+                        <td>{{val.classType}}</td>
+                        <td>{{val.classSessionName}}</td>
+                        <td>{{returnDateTime(val.sessionDateTime)}}</td>
+                        <td>{{val.coachName}}</td>
+                        <td>{{val.businessProfileName}}</td>
+                      </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="card-footer py-3 d-flex justify-content-between">
+                    <pagination *ngIf="personalClassSessionTotalElement > 5" [boundaryLinks]="true"
+                                [rotate]="false"
+                                (pageChanged)="personalClassSessionEnrollmentPageChange($event)"
+                                [itemsPerPage]="5"
+                                [maxSize]="3"
+                                [totalItems]="personalClassSessionTotalElement"  class="pagination-icons pagination-second"></pagination>
+                  </div>
+                </div>
+              </div>
+              <div class="card card-box mb-5">
+                <div class="card-header-alt p-4">
+                  <h6 class="font-weight-bold font-size-lg mb-1 text-black">Online Group Class Enrollments</h6>
+                </div>
+                <div class="divider"></div>
+                <div class="card-body pt-2 px-4 pb-4">
+                  <div class="table-responsive">
+                    <table class="table table-hover table-striped table-bordered mb-0">
+                      <thead>
+                      <tr>
+                        <th>Class Name</th>
+                        <th>Type</th>
+                        <th>Session Name</th>
+                        <th>Date & Time</th>
+                        <th>Coach</th>
+                        <th>Studio Name</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      <tr *ngFor="let val of classReturnedArray">
+                        <td>{{val.className}}</td>
+                        <td>{{val.classType}}</td>
+                        <td>{{val.classSessionName}}</td>
+                        <td>{{returnDateTime(val.sessionDateTime)}}</td>
+                        <td>{{val.coachName}}</td>
+                        <td>{{val.businessProfileName}}</td>
+                      </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="card-footer py-3 d-flex justify-content-between">
+                    <pagination *ngIf="classTotalElement > 5" [boundaryLinks]="true"
+                                [rotate]="false"
+                                (pageChanged)="classEnrollmentPageChange($event)"
+                                [itemsPerPage]="5"
+                                [maxSize]="3"
+                                [totalItems]="classTotalElement"  class="pagination-icons pagination-second"></pagination>
+                  </div>
+                </div>
+              </div>
+              <div class="card card-box mb-5">
+                <div class="card-header-alt p-4">
+                  <h6 class="font-weight-bold font-size-lg mb-1 text-black">Online Personal Coaching Enrollments</h6>
+                </div>
+                <div class="divider"></div>
+                <div class="card-body pt-2 px-4 pb-4">
+                  <div class="table-responsive">
+                    <table class="table table-hover table-striped table-bordered mb-0">
+                      <thead>
+                      <tr>
+                        <th>Coach Name</th>
+                        <th>Package</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Studio Name</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      <tr *ngFor="let val of instructorReturnedArray">
+                        <td>{{val.instructorName}}</td>
+                        <td>{{val.instructorPackageName}}</td>
+                        <td>{{returnDate(val.enrollDateTime)}}</td>
+                        <td>{{returnDate(val.expireDateTime)}}</td>
+                        <td>{{val.businessProfileName}}</td>
+                      </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="card-footer py-3 d-flex justify-content-between">
+                    <pagination *ngIf="instructorTotalElement > 5" [boundaryLinks]="true"
+                                [rotate]="false"
+                                (pageChanged)="instructorEnrollmentPageChange($event)"
+                                [itemsPerPage]="5"
+                                [maxSize]="3"
+                                [totalItems]="instructorTotalElement"  class="pagination-icons pagination-second"></pagination>
+                  </div>
+                </div>
+              </div>
+              <div class="card card-box mb-5">
+                <div class="card-header-alt p-4">
+                  <h6 class="font-weight-bold font-size-lg mb-1 text-black">Gym Membership Enrollments</h6>
+                </div>
+                <div class="divider"></div>
+                <div class="card-body pt-2 px-4 pb-4">
+                  <div class="table-responsive">
+                    <table class="table table-hover table-striped table-bordered mb-0">
+                      <thead>
+                      <tr>
+                        <th>Business Profile</th>
+                        <th>Gym</th>
+                        <th>Membership</th>
+                        <th>Type</th>
+                        <th style="width: 10%">Enroll Date</th>
+                        <th style="width: 10%">Expire Date</th>
+                        <th>Paid Amount ({{currency}})</th>
+                        <th>Payment Status</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      <tr *ngFor="let val of gymMembershipEnrollmentReturnedArray">
+                        <td>{{val.businessProfileName}}</td>
+                        <td>{{val.gymName}}</td>
+                        <td>{{val.membershipName}}</td>
+                        <td>{{val.membershipType}}</td>
+                        <td>{{returnDate(val.enrollDateTime)}}</td>
+                        <td>{{returnDate(val.expireDateTime)}}</td>
+                        <td>{{val.paidAmount}}</td>
+                        <td>{{val.paymentStatus}}</td>
+                      </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="card-footer py-3 d-flex justify-content-between">
+                    <pagination *ngIf="gymMembershipEnrollmentTotalElement > 5" [boundaryLinks]="true"
+                                [rotate]="false"
+                                (pageChanged)="gymMembershipEnrollmentPageChange($event)"
+                                [itemsPerPage]="5"
+                                [maxSize]="3"
+                                [totalItems]="gymMembershipEnrollmentTotalElement"  class="pagination-icons pagination-second"></pagination>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div bsModal #commonMoreInfoModal="bs-modal" class="modal fade screen" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content border-0 bg-transparent">
+      <div class="row no-gutters">
+        <div class="col-lg-12">
+          <div class="bg-white rounded-left rounded-right">
+            <div class="modal-header">
+              <button type="button" class="close" aria-label="Close" (click)="commonMoreInfoModal.hide()">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="card card-box mb-5">
+                <div class="card-header-alt p-4">
+                  <h6 class="font-weight-bold font-size-lg mb-1 text-black">General Information</h6>
+                </div>
+                <div class="divider"></div>
+                <div class="card-body pt-2 px-4 pb-4">
+                  <form autocomplete="off" (keydown.enter)="$event.preventDefault()" name="commonMoreInfoForm" [formGroup]="commonMoreInfoForm">
+                    <div class="form-row">
+                      <div class="col-md-12">
+                        <!--                        <div class="position-relative row form-group">-->
+                        <!--                          <label class="col-sm-3 col-form-label font-weight-bold" for="session">Session</label>-->
+                        <!--                          <div class="col-sm-8">-->
+                        <!--                            <input readonly class="form-control" formControlName="session" id="session" name="session"-->
+                        <!--                                   placeholder="Session" type="text"></div>-->
+                        <!--                        </div>-->
+                        <div class="position-relative row form-group">
+                          <label class="col-sm-3 col-form-label font-weight-bold"
+                                 for="Class">Class</label>
+                          <div style="right: 40px" class="col-sm-9">
+                            <input readonly formControlName="class" class="form-control" id="class" name="class"
+                                   placeholder="Class" type="text"></div>
+                        </div>
+                        <div class="position-relative row form-group">
+                          <label class="col-sm-3 col-form-label font-weight-bold"
+                                 for="studio">Studio Profile</label>
+                          <div style="right: 40px" class="col-sm-9">
+                            <input readonly formControlName="studio" class="form-control" id="studio" name="studio"
+                                   placeholder="Studio Profile" type="text"></div>
+                        </div>
+                        <div class="position-relative row form-group">
+                          <label class="col-sm-3 col-form-label font-weight-bold"
+                                 for="trainer">Trainer</label>
+                          <div style="right: 40px" class="col-sm-9">
+                            <input readonly formControlName="trainer" class="form-control" id="trainer" name="trainer"
+                                   placeholder="Trainer" type="text"></div>
+                        </div>
+                      </div>
+                    </div>
+                    <hr>
+                    <div class="form-row">
+                      <div class="col-md-6">
+                        <div class="position-relative row form-group">
+                          <label class="col-sm-5 col-form-label font-weight-bold" for="branchName">Branch Name</label>
+                          <div class="col-sm-6">
+                            <input readonly class="form-control" formControlName="branchName" id="branchName" name="branchName"
+                                   placeholder="Branch Name" type="text"></div>
+                        </div>
+                        <div class="position-relative row form-group">
+                          <label class="col-sm-5 col-form-label font-weight-bold"
+                                 for="addressLine1">Address Line 1</label>
+                          <div class="col-sm-6">
+                            <input readonly formControlName="addressLine1" class="form-control" id="addressLine1" name="gender"
+                                   placeholder="Address Line 1" type="text"></div>
+                        </div>
+                        <div class="position-relative row form-group">
+                          <label class="col-sm-5 col-form-label font-weight-bold"
+                                 for="addressLine2">Address Line 2</label>
+                          <div class="col-sm-6">
+                            <input readonly formControlName="addressLine2" class="form-control" id="addressLine2" name="addressLine2"
+                                   placeholder="Address Line 2" type="text"></div>
+                        </div>
+                        <div class="position-relative row form-group">
+                          <label class="col-sm-5 col-form-label font-weight-bold"
+                                 for="city">City</label>
+                          <div class="col-sm-6">
+                            <input readonly placeholder="City" formControlName="city" class="form-control" id="city" name="city" type="text"></div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="position-relative row form-group"><label class="col-sm-5 col-form-label font-weight-bold"
+                                                                             for="postalCode">Postal Code</label>
+                          <div class="col-sm-6"><input readonly class="form-control" formControlName="postalCode" id="postalCode" name="postalCode"
+                                                       placeholder="Postal Code" type="text"></div>
+                        </div>
+                        <div class="position-relative row form-group"><label class="col-sm-5 col-form-label font-weight-bold"
+                                                                             for="province">Province</label>
+                          <div class="col-sm-6"><input readonly class="form-control" formControlName="province" id="province" name="province"
+                                                       placeholder="Province" type="text"></div>
+                        </div>
+                        <div class="position-relative row form-group">
+                          <label class="col-sm-5 col-form-label font-weight-bold"
+                                 for="country">Country</label>
+                          <div class="col-sm-6"><input readonly class="form-control" formControlName="country" id="country" name="country"
+                                                       placeholder="Country" type="text"></div>
+                        </div>
+                        <div class="position-relative row form-group">
+                          <label class="col-sm-5 col-form-label font-weight-bold"
+                                 for="country">View Location</label>
+                          <div class="col-sm-6">
+                            <button [disabled]="disable" (click)="viewLocation()" class="btn d-40 p-0 btn-pill m-2 btn-success"
+                                    type="button">
+                <span class="btn-wrapper--icon">
+                     <i class="ion-ios-pin"></i>
+                </span>
+                            </button>
+                          </div>
+                        </div>
+                        <!--                        <div class="position-relative row form-group">-->
+                        <!--                          <label class="col-sm-6 col-form-label font-weight-bold" for="dateTime">Session Fee ({{currency}})</label>-->
+                        <!--                          <div class="col-sm-5">-->
+                        <!--                            <input readonly class="form-control" formControlName="sessionFee" id="sessionFee" name="sessionFee"-->
+                        <!--                                   placeholder="Session Fee" type="text"></div>-->
+
+                        <!--                        </div>-->
+                      </div>
+                    </div>
+                    <hr>
+                    <div class="form-row">
+                      <div class="col-md-6">
+                        <div class="position-relative row form-group">
+                          <label class="col-sm-5 col-form-label font-weight-bold" for="dateTime">Start Date & Time</label>
+                          <div class="col-sm-6">
+                            <input readonly class="form-control" formControlName="dateTime" id="dateTime" name="dateTime"
+                                   placeholder="Start Date & Time" type="text"></div>
+                        </div>
+                        <div class="position-relative row form-group">
+                          <label class="col-sm-5 col-form-label font-weight-bold"
+                                 for="gender">Gender Specific</label>
+                          <div class="col-sm-6">
+                            <input readonly formControlName="gender" class="form-control" id="gender" name="gender"
+                                   placeholder="Gender Specific" type="text"></div>
+                        </div>
+                        <div class="position-relative row form-group">
+                          <label class="col-sm-5 col-form-label font-weight-bold"
+                                 for="maxJoiner">Max Joiners Limit</label>
+                          <div class="col-sm-6">
+                            <input readonly formControlName="maxJoiner" class="form-control" id="maxJoiner" name="maxJoiner"
+                                   placeholder="Type" type="text"></div>
+                        </div>
+                        <div class="position-relative row form-group">
+                          <label class="col-sm-5 col-form-label font-weight-bold"
+                                 for="maxJoiner">Allow Cash Payment</label>
+                          <div class="col-sm-6">
+                            <input readonly formControlName="paymentStatus" class="form-control" id="paymentStatus" name="paymentStatus" type="text"></div>
+                        </div>
+                      </div>
+                      <div class="col-sm-6">
+                        <div class="position-relative row form-group"><label class="col-sm-5 col-form-label font-weight-bold"
+                                                                             for="duration">Duration (min)</label>
+                          <div class="col-sm-6"><input readonly class="form-control" formControlName="duration" id="duration" name="duration"
+                                                       placeholder="Duration" type="text"></div>
+                        </div>
+                        <div class="position-relative row form-group"><label class="col-sm-5 col-form-label font-weight-bold"
+                                                                             for="language">Language</label>
+                          <div class="col-sm-6"><input readonly class="form-control" formControlName="language" id="language" name="language"
+                                                       placeholder="Language" type="text"></div>
+                        </div>
+                        <div class="position-relative row form-group">
+                          <label class="col-sm-5 col-form-label font-weight-bold"
+                                 for="enrollment">Enrollment</label>
+                          <div class="col-sm-6"><input readonly class="form-control" formControlName="enrollment" id="enrollment" name="enrollment"
+                                                       placeholder="Enrollment" type="text"></div>
+                        </div>
+                        <div class="position-relative row form-group">
+                          <label class="col-sm-5 col-form-label font-weight-bold" for="dateTime">Session Fee ({{currency}})</label>
+                          <div class="col-sm-6">
+                            <input readonly class="form-control" formControlName="sessionFee" id="sessionFee" name="sessionFee"
+                                   placeholder="Session Fee" type="text"></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-row">
+                      <div class="col-md-12">
+                        <div class="form-group">
+                          <label for="description" class="font-weight-bold">Description</label>
+                          <textarea readonly name="description" formControlName="description" rows="6" class="form-control" id="description"
+                                    placeholder="Description"></textarea>
+                        </div>
+                      </div>
+                      <!--                      <div class="col-md-6">-->
+                      <!--                        <div class="form-group">-->
+                      <!--                          <label for="prepare" class="font-weight-bold">How to Prepare</label>-->
+                      <!--                          <textarea readonly name="prepare" formControlName="prepare" rows="6" class="form-control" id="prepare"-->
+                      <!--                                    placeholder="How to Prepare"></textarea>-->
+                      <!--                        </div>-->
+                      <!--                      </div>-->
+                    </div>
+                    <div class="form-row">
+                      <div class="col-md-3" >
+                        <div class="form-group">
+                          <label class="font-weight-bold">Profile Image</label>
+                          <div class="d-flex flex-column flex-sm-row align-items-start">
+                            <div>
+                              <div class="card card-transparent mb-3 mb-sm-0" style="display:block;border: 2px dashed  #1d1c1c;
+                          border-radius: 10px;">
+                                <a  class="card-img-wrapper rounded">
+                                  <div class="img-wrapper-overlay">
+                                    <div class="overlay-btn-wrapper">
+                                      <!--                                      <button  class="btn btn-pill btn-sm btn-outline-secondary border-0 shadow-none pl-2 pr-2 mx-auto d-flex align-items-center"-->
+                                      <!--                                               type="button">-->
+                                      <!--                                        <fa-icon [icon]="['fas', 'camera-retro']" class="font-size-lg"></fa-icon>-->
+                                      <!--                                      </button>-->
+                                    </div>
+                                  </div>
+                                  <img  class="card-img-top rounded" id="Image"
+                                        src="assets/images/no-image-available.png" >
+                                </a>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-3" >
+                        <div class="form-group">
+                          <label class="font-weight-bold">Cover Images</label>
+                          <div class="d-flex flex-column flex-sm-row align-items-start">
+                            <div>
+                              <div class="card card-transparent mb-3 mb-sm-0" style="display:block;border: 2px dashed  #1d1c1c;
+                          border-radius: 10px;">
+                                <a  class="card-img-wrapper rounded">
+                                  <div class="img-wrapper-overlay">
+                                    <div class="overlay-btn-wrapper">
+                                    </div>
+                                  </div>
+                                  <img  class="card-img-top rounded" *ngIf="imageDetailsArray[0] !== undefined" [src]='imageDetailsArray[0]||"assets/images/no-image-available.png"'/>
+                                  <img  class="card-img-top rounded"  *ngIf="imageDetailsArray[0] === undefined" src="assets/images/no-image-available.png"/>
+                                </a>
+                              </div>
+                            </div>
+                          </div>
+
+                        </div>
+                      </div>
+                      <div style="padding: 8px;" class="col-md-3">
+                        <div class="form-group">
+                          <label class="font-weight-bold"></label>
+                          <div class="d-flex flex-column flex-sm-row align-items-start">
+                            <div>
+                              <div class="card card-transparent mb-3 mb-sm-0" style="display:block;border: 2px dashed  #1d1c1c;
+                          border-radius: 10px;">
+                                <a  class="card-img-wrapper rounded">
+                                  <div class="img-wrapper-overlay">
+                                    <div class="overlay-btn-wrapper">
+                                    </div>
+                                  </div>
+                                  <img  class="card-img-top rounded" *ngIf="imageDetailsArray[1] !== undefined" [src]='imageDetailsArray[1]||"assets/images/no-image-available.png"'/>
+                                  <img  class="card-img-top rounded"  *ngIf="imageDetailsArray[1] === undefined" src="assets/images/no-image-available.png"/>
+                                </a>
+                              </div>
+                            </div>
+                          </div>
+
+                        </div>
+                      </div>
+                      <div style="padding: 8px;" class="col-md-3">
+                        <div class="form-group">
+                          <label class="font-weight-bold"></label>
+                          <div class="d-flex flex-column flex-sm-row align-items-start">
+                            <div>
+                              <div style="display:block;border: 2px dashed  #1d1c1c;
+                          border-radius: 10px;" class="card card-transparent mb-3 mb-sm-0">
+                                <a  class="card-img-wrapper rounded">
+                                  <div class="img-wrapper-overlay">
+                                    <div class="overlay-btn-wrapper">
+                                    </div>
+                                  </div>
+                                  <img  class="card-img-top rounded"  *ngIf="imageDetailsArray[2] !== undefined" [src]='imageDetailsArray[2]||"assets/images/no-image-available.png"'/>
+                                  <img  class="card-img-top rounded" *ngIf="imageDetailsArray[2] === undefined" src="assets/images/no-image-available.png"/>
+                                </a>
+                              </div>
+                            </div>
+                          </div>
+
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+              <div [hidden]="isPhysicalSession" class="card card-box mb-5">
+                <div class="card-header-alt p-4">
+                  <h6 class="font-weight-bold font-size-lg mb-1 text-black">Enrollments</h6>
+                </div>
+                <div class="divider"></div>
+                <div class="card-body pt-2 px-4 pb-4">
+                  <div class="table-responsive">
+                    <table class="table table-hover table-striped table-bordered mb-0">
+                      <thead>
+                      <tr>
+                        <th>Username</th>
+                        <th>Gender</th>
+                        <th>Age</th>
+                        <th>Country</th>
+                        <th>Amount</th>
+                        <th>Payment Status</th>
+                        <th>Payment Method</th>
+                        <th>Collected By</th>
+                        <th style="text-align: center">Action</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      <tr *ngFor="let val of sessionListReturnArray">
+                        <td>{{val.publicUserName}}</td>
+                        <td>{{val.gender}}</td>
+                        <td>{{returnAge(val.age)}}</td>
+                        <td>{{val.country}}</td>
+                        <td style="text-align: center">{{val.dueAmount}}</td>
+                        <td style="text-align: center">
+                          <span *ngIf="val.enrollStatus === 'SESSION_BOOKED'" class="badge badge-success h-auto py-0 px-3">{{val.enrollStatus}}</span>
+                          <span *ngIf="val.enrollStatus === 'MEMBERSHIP_BOOKED'" class="badge badge-success h-auto py-0 px-3">{{val.enrollStatus}}</span>
+                          <span *ngIf="val.enrollStatus === 'SESSION_PENDING'" class="badge badge-warning h-auto py-0 px-3">{{val.enrollStatus}}</span>
+                          <span *ngIf="val.enrollStatus === 'MEMBERSHIP_PENDING'" class="badge badge-warning h-auto py-0 px-3">{{val.enrollStatus}}</span>
+                          <span *ngIf="val.enrollStatus === 'FREE'" class="badge badge-primary h-auto py-0 px-3">{{val.enrollStatus}}</span>
+                        </td>
+                        <td *ngIf="val.paymentMethod === 'ONLINE'" style="text-align: center">ONLINE</td>
+                        <td *ngIf="val.paymentMethod !== 'ONLINE'" style="text-align: center">{{val.paymentMethod}}</td>
+                        <td style="text-align: center">{{val.collectedBy}}</td>
+                        <td style="text-align: center">
+                          <button *ngIf="val.enrollStatus === 'SESSION_PENDING' || val.enrollStatus === 'MEMBERSHIP_PENDING'" (click)="makePayment(val)" class="btn btn-sm btn-neutral-first" type="button">Collect payment</button>
+                          <button *ngIf="val.enrollStatus === 'SESSION_BOOKED' || val.enrollStatus === 'MEMBERSHIP_BOOKED'" disabled class="btn btn-sm btn-neutral-first"  type="button">Paid</button>
+                        </td>
+                      </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="card-footer py-3 d-flex justify-content-between">
+                    <pagination *ngIf="sessionTotalElement > 5" [boundaryLinks]="true"
+                                [rotate]="false"
+                                (pageChanged)="sessionEnrollmentPageChanged($event)"
+                                [itemsPerPage]="5"
+                                [maxSize]="3"
+                                [totalItems]="sessionTotalElement"  class="pagination-icons pagination-second"></pagination>
+                  </div>
+                </div>
+              </div>
+              <div [hidden]="isOnlineSession" class="card card-box mb-5">
+                <div class="card-header-alt p-4">
+                  <h6 class="font-weight-bold font-size-lg mb-1 text-black">Enrollments</h6>
+                </div>
+                <div class="divider"></div>
+                <div class="card-body pt-2 px-4 pb-4">
+                  <div class="table-responsive">
+                    <table class="table table-hover table-striped table-bordered mb-0">
+                      <thead>
+                      <tr>
+                        <th>Username</th>
+                        <th>Gender</th>
+                        <th>Age</th>
+                        <th>Country</th>
+                        <th>Payment Source</th>
+                        <th>Corporate</th>
+                        <th>Attendance</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      <tr *ngFor="let val of sessionListReturnArray">
+                        <td>{{val.publicUserName}}</td>
+                        <td>{{val.gender}}</td>
+                        <td>{{returnAge(val.age)}}</td>
+                        <td>{{val.country}}</td>
+                        <td>{{val.paymentMethod}}</td>
+                        <td>
+                          <span *ngIf="val['corporateName'] !== null">{{val.corporateName}}</span>
+
+                          <span class="badge bg-neutral-success text-black-50" *ngIf="val['corporateName'] === null">None</span>
+                        </td>
+                        <td>
+                          <span class="badge bg-neutral-success text-success" *ngIf="val['attendance'] === 'true'">Yes</span>
+
+                          <span class="badge bg-neutral-success text-danger" *ngIf="val['attendance'] === 'false'">No</span>
+                        </td>
+                      </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="card-footer py-3 d-flex justify-content-between">
+                    <pagination *ngIf="sessionTotalElement > 5"  [boundaryLinks]="true"
+                                [rotate]="false"
+                                (pageChanged)="onlineSessionEnrollmentPageChanged($event)"
+                                [itemsPerPage]="5"
+                                [maxSize]="3"
+                                [totalItems]="sessionTotalElement"  class="pagination-icons pagination-second"></pagination>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
