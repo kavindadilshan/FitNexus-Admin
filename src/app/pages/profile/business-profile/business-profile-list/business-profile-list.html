@@ -1,0 +1,829 @@
+<div *ngIf="userRole === 'ROLE_SUPER_ADMIN'" class="card card-box mb-5 screen">
+  <div class="card-header py-3">
+    <div class="card-header--title font-size-lg">
+      <div  class="d-flex justify-content-between px-4 py-3">
+        <div class="search-wrapper">
+          <span class="icon-wrapper text-black">
+            <fa-icon [icon]="['fas', 'search']"></fa-icon>
+          </span>
+          <form autocomplete="off" (keydown.enter)="$event.preventDefault()" name="searchProfile"
+                [formGroup]="searchProfile">
+            <input class="form-control search-field form-control-sm rounded-pill" (search)="clear()"
+                   (keyup)="filterProfile()" id="search" name="search" formControlName="search"
+                   placeholder="Search terms..." type="search">
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="card-header--actions td-zoom">
+      <button [routerLink]="'/create-business-profile'" class="btn m-2 btn-pill btn-warning" type="button">Create
+      </button>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="divider"></div>
+    <div class="table-responsive ">
+      <table class="table table-hover table-striped table-bordered mb-0">
+        <thead>
+        <tr>
+
+          <th class="bg-white" style="width: 20%;">Business Name</th>
+<!--          <th class="bg-white" style="width: 3%;">Registration No</th>-->
+          <th class="bg-white">RATINGS (NO OF REVIEWS)</th>
+          <th class="bg-white">Status</th>
+          <th class="bg-white">More Info</th>
+          <th class="bg-white">Actions</th>
+<!--          <th class="bg-white">Resend Email</th>-->
+        </tr>
+        </thead>
+        <tbody style="padding: 2.25rem">
+        <tr *ngFor="let val of returnedArray">
+          <td>
+            <div class="d-flex align-items-center">
+              <div class="avatar-icon-wrapper mr-2">
+                <div class="avatar-icon">
+                  <img  *ngIf="val['profileImage'] !== null" [src]='val.profileImage||"assets/images/no-image-available.png"'/>
+                  <img  *ngIf="val['profileImage'] === null" src="assets/images/no-image-available.png"/>
+                </div>
+              </div>
+              <div>
+                <a class="font-weight-bold text-black">
+                  {{val.businessName}}
+                </a>
+              </div>
+            </div>
+          </td>
+<!--          <td>-->
+<!--            {{val.businessRegistrationNumber}}-->
+<!--          </td>-->
+          <td>
+            <div class="d-flex align-items-center">
+              <bar-rating [(rate)]="val.rating" style="pointer-events: none;" [theme]="'rating-icons-default'"
+                          class="rating-warning" [max]="5"></bar-rating>
+              <div>
+                &nbsp;&nbsp;<span><b>({{val.ratingCount}})</b></span>
+              </div>
+            </div>
+          </td>
+          <td>
+            <span class="badge bg-neutral-success text-success" *ngIf="val['accountStatus'] === 'Active'">active</span>
+            <span class="badge bg-neutral-danger text-danger"
+                  *ngIf="val['accountStatus'] === 'Inactive'">inactive</span>
+            <span class="badge bg-neutral-warning text-warning"
+                  *ngIf="val['accountStatus'] !== 'Active' && val['accountStatus'] !== 'Inactive' ">{{val.accountStatus}}</span>
+          </td>
+          <td class="text-center td-zoom" >
+            <button (click)="moreInfo(val)"  class="btn m-2 btn-pill btn-first" type="button">View
+            </button>
+          </td>
+          <td class="td-zoom">
+            <button *ngIf="val['accountStatus'] === 'Active' || val['accountStatus'] !== 'Inactive'"
+                    (click)="editBusinessProfileRoute(val.businessName,val.id)"
+                    class="btn m-2 btn-pill btn-second" type="button">Edit
+            </button>
+            <button (click)="deactivateProfile(val)"
+                    *ngIf="val['accountStatus'] === 'Active' || val['accountStatus'] !== 'Inactive' && userRole === 'ROLE_SUPER_ADMIN'"
+                    class="btn m-2 btn-pill btn-danger" type="button">Deactivate
+            </button>
+            <button *ngIf="val['accountStatus'] === 'Inactive' && userRole === 'ROLE_SUPER_ADMIN'"
+                    (click)="activateProfile(val)" class="btn m-2 btn-pill btn-success"
+                    type="button">Activate
+            </button>
+<!--            <button (click)="AgreementModal.show()" *ngIf="val['accountStatus'] !== 'Active' && val['accountStatus'] !== 'Inactive' && val['accountStatus'] !== 'Pending' " class="btn m-2 btn-pill btn-info"-->
+<!--                    type="button">Renewal-->
+<!--            </button>-->
+          </td>
+<!--          <td class="text-center td-zoom" >-->
+<!--            <button *ngIf="val.manager['conditionsAccepted'] === true" disabled (click)="emailModal(val)"  class="btn m-2 btn-pill btn-primary" type="button">Resend</button>-->
+<!--            <button *ngIf="val.manager['conditionsAccepted']  !== true"  (click)="emailModal(val)"  class="btn m-2 btn-pill btn-primary" type="button">Resend</button>-->
+<!--          </td>-->
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <div *ngIf="totalElement" class="card-footer py-3 d-flex justify-content-between">
+      <pagination *ngIf="totalElement > 10" [boundaryLinks]="true"
+                  [rotate]="true"
+                  (pageChanged)="pageChanged($event)"
+                  [itemsPerPage]="size"
+                  [(ngModel)]="currentPage"
+                  [maxSize]="3"
+                  [totalItems]="totalElement" class="pagination-icons pagination-second"></pagination>
+    </div>
+  </div>
+</div>
+<div bsModal #lgModal="bs-modal" class="modal fade screen" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content border-0 bg-transparent">
+      <div class="row no-gutters">
+        <div class="col-lg-12">
+          <div class="bg-white rounded-left rounded-right">
+            <div class="modal-header">
+              <button type="button" class="close" aria-label="Close" (click)="lgModal.hide()">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <form autocomplete="off" (keydown.enter)="$event.preventDefault()" name="moreInfoForm"
+                  [formGroup]="moreInfoForm">
+              <div class="modal-body">
+                <div class="card card-box mb-5">
+                  <div class="card-body pt-2 px-4 pb-4">
+                    <div class="form-row">
+
+                      <div class="col-md-6">
+                        <div class="position-relative row form-group">
+                          <label class="col-sm-3 col-form-label font-weight-bold" for="businessName">Business
+                            Name</label>
+                          <div class="col-sm-8">
+                            <input readonly class="form-control" placeholder="Business Name"
+                                   formControlName="businessName" id="businessName" name="businessName" type="text">
+                          </div>
+                        </div>
+                        <div class="position-relative row form-group">
+                          <label class="col-sm-3 col-form-label font-weight-bold"
+                                 for="regNo">Registration Number</label>
+                          <div class="col-sm-8">
+                            <input readonly class="form-control" formControlName="regNo" id="regNo" name="regNo" placeholder="Registration Number" type="text">
+                                </div>
+                              </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="position-relative row form-group">
+                            <label class="col-sm-3 col-form-label font-weight-bold"
+                                   for="exampleEmail">Email</label>
+                            <div class="col-sm-8">
+                              <input readonly class="form-control" id="exampleEmail" formControlName="email" name="email"
+                                     placeholder="Email" type="text">
+                            </div>
+                          </div>
+                          <div class="position-relative row form-group">
+                            <label
+                            class="col-sm-3 col-form-label font-weight-bold">Telephone Number</label>
+                            <div class="col-sm-8">
+                              <ngx-intl-tel-input
+                                [preferredCountries]="[CountryISO.UnitedStates, CountryISO.UnitedKingdom]"
+                                [enableAutoCountrySelect]="false"
+                                [enablePlaceholder]="true"
+                                [searchCountryFlag]="true"
+                                disabled
+                                [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
+                                [selectFirstCountry]="false"
+                                [selectedCountryISO]="CountryISO.SriLanka"
+                                [maxLength]="15"
+                                [tooltipField]="TooltipLabel.Name"
+                                [phoneValidation]="true"
+                                name="phone"
+                                formControlName="phone"></ngx-intl-tel-input>
+                            </div>
+                          </div>
+                        </div>
+                      <div class="col-md-12">
+                        <div class="position-relative row form-group">
+                          <label class="col-sm-3 col-form-label font-weight-bold"
+                                 for="exampleEmail">Description</label>
+                          <textarea readonly maxlength="1000" name="profileDescription" formControlName="profileDescription" rows="6" class="form-control" id="profileDescription"
+                                    placeholder="Description"></textarea>
+                        </div>
+                      </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card card-box mb-5">
+                    <div class="card-header-alt p-4">
+                      <h6 class="font-weight-bold font-size-lg mb-1 text-black">Head Office & Branches</h6>
+                      <!--              <p class="text-black-50 mb-0">Reports for what we sold this week.</p>-->
+                    </div>
+                    <div class="divider"></div>
+
+                    <div class="card-body pt-2 px-4 pb-4">
+                    </div>
+                    <div class="card-body pt-2 px-4 pb-4">
+                      <div class="table-responsive">
+                        <table class="table table-hover table-striped table-bordered mb-0">
+                          <thead>
+                          <tr>
+                            <th></th>
+                            <th>Address Line 1</th>
+                            <th>Address Line 2</th>
+                            <th>City</th>
+                            <th>Province</th>
+                            <th>Country</th>
+                            <th>Postal Code</th>
+                            <th>Time zone</th>
+                            <th>Location</th>
+                          </tr>
+                          </thead>
+                          <tbody>
+                          <tr *ngFor="let val of branchArr">
+                            <td>{{val.type}}</td>
+                            <td>{{val.addressLine1}}</td>
+                            <td>{{val.addressLine2}}</td>
+                            <td>{{val.city}}</td>
+                            <td>{{val.province}}</td>
+                            <td>{{val.country}}</td>
+                            <td>{{val.postalCode}}</td>
+                            <td>{{val.timeZone}}</td>
+                            <td>
+                              <button (click)="viewLocation(val)" class="btn d-40 p-0 btn-pill m-2 btn-success"
+                                      type="button">
+                <span class="btn-wrapper--icon">
+                     <i class="ion-ios-map"></i>
+                </span>
+                              </button>
+                            </td>
+                          </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="form-group col-md-4">
+                      <div class="card card-box mb-5 gallery-div">
+                        <div class="card-header-alt p-4">
+                          <h6 class="font-weight-bold font-size-lg mb-1 text-black">Gallery</h6>
+                        </div>
+                        <div class="card-body pt-2 px-4 pb-4">
+                          <div class="row">
+                            <table
+                                   class="table table-hover table-striped table-bordered mb-0 table-border">
+                              <thead>
+                              <tr class="table-border">
+                                <th class="table-border"><b>Profile Images</b></th>
+                              </tr>
+                              </thead>
+                              <tbody class="table-border">
+                              <tr class="table-border">
+                                <td class="text-center table-border">
+                                  <div class="col-lg-12">
+                                    <a  class="card-img-wrapper rounded">
+                                      <img  class="card-img-top rounded" *ngIf="profileImage !== null"
+                                           [src]='profileImage||"assets/images/no-image-available.png"'/>
+                                      <img  class="card-img-top rounded" *ngIf="profileImage === null"
+                                           src="assets/images/no-image-available.png"/>
+                                    </a>
+                                  </div>
+                                </td>
+                              </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                          <div class="row">
+                            <table
+                                   class="table table-border table-hover table-striped table-bordered mb-0">
+                              <thead>
+                              <tr class="table-border">
+                                <th class="table-border"><b>Cover Images</b></th>
+                              </tr>
+                              </thead>
+                              <tbody>
+                              <tr class="table-border" *ngFor="let val of imageDetailsArray">
+                                <td class="text-center table-border">
+                                  <div class="col-lg-10">
+                                    <a class="card-img-wrapper rounded">
+                                      <img  class="card-img-top rounded" *ngIf=" val!== null" [src]='val||"assets/images/no-image-available.png"'/>
+                                      <img  class="card-img-top rounded" *ngIf="val === null"
+                                           src="assets/images/no-image-available.png"/>
+                                    </a>
+                                  </div>
+                                </td>
+                              </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-group col-md-8">
+                      <h4>Bank Details</h4>
+                      <hr>
+                      <div class="form-row">
+                        <div class="form-group col-md-6">
+                          <label>Account Number</label>
+                          <input readonly class="form-control" name="accNumber" formControlName="accNumber"
+                                 id="accNumber"
+                                 placeholder="Account Number" type="text">
+                        </div>
+                        <div class="form-group col-md-6">
+                          <label>Swift Code</label>
+                          <input readonly class="form-control" name="swiftCode" formControlName="swiftCode"
+                                 id="swiftCode"
+                                 placeholder="Swift Code" type="text">
+                        </div>
+                        <div class="form-group col-md-6">
+                          <label>Bank Name</label>
+                          <input readonly class="form-control" name="bankName" formControlName="bankName" id="bankName"
+                                 placeholder="Bank Name" type="text">
+                        </div>
+                        <div class="form-group col-md-6">
+                          <label>Bank Code</label>
+                          <input readonly class="form-control" name="bankCode" formControlName="bankCode" id="bankCode"
+                                 placeholder="Bank Code" type="text">
+                        </div>
+                        <div class="form-group col-md-6">
+                          <label>Branch</label>
+                          <input readonly class="form-control" name="branch" formControlName="branch" id="branch"
+                                 placeholder="Branch" type="text">
+                        </div>
+                        <div class="form-group col-md-6">
+                          <label>Branch Code</label>
+                          <input readonly class="form-control" name="brachCode" formControlName="brachCode"
+                                 id="brachCode"
+                                 placeholder="Branch Code" type="text">
+                        </div>
+                      </div>
+                      <h4>Business Agreemant</h4>
+                      <hr>
+                      <div class="form-row">
+                        <div class="form-group col-md-6">
+                          <label>Start Date</label>
+                          <input readonly class="form-control" name="startDate" formControlName="startDate"
+                                 id="startDate"
+                                 placeholder="Start Date" type="text">
+                        </div>
+                        <div class="form-group col-md-6">
+                          <label>Expire Date</label>
+                          <input readonly class="form-control" name="expireDate" formControlName="expireDate"
+                                 id="expireDate" placeholder="Expire Date" type="text">
+                        </div>
+                        <div class="form-group col-md-6">
+                          <label>Model</label>
+                          <input readonly class="form-control" name="model" formControlName="model" id="model"
+                                 placeholder="Model" type="text">
+                        </div>
+                        <div id="subscriptionDiv" hidden class="form-group col-md-6">
+                          <label for="fee">Subscription Fee ({{currency}})</label>
+                          <input readonly class="form-control" name="fee" formControlName="fee" id="fee"
+                                 placeholder="Fee"
+                                 type="text">
+                        </div>
+                        <div hidden id="commissionDiv" class="form-group col-md-6">
+                          <label for="commission">Commission percentage (%)</label>
+                          <input readonly class="form-control" name="commission" formControlName="commission" id="commission"
+                                 placeholder="Commission percentage"
+                                 type="text">
+                        </div>
+                        <div class="form-group col-md-6">
+                          <label for="agreemtDescription">Description</label>
+                          <textarea readonly maxlength="1000" name="agreemtDescription"
+                                    formControlName="agreemtDescription" rows="4" class="form-control"
+                                    id="agreemtDescription"
+                                    placeholder="Description"></textarea>
+                        </div>
+                        <div class="form-group col-md-6">
+                          <label>View Agreement</label>
+                          <br>
+                          <a [href]="pdfFile" target="_blank"><img style="height: 111px;width: 112px;" src="assets/images/pdf-2127829_640.png"></a>
+                        </div>
+
+
+                      </div>
+                      <h4>Profile Manager Details</h4>
+                      <hr>
+                      <div class="form-row">
+                        <div class="form-group col-md-6">
+                          <label>First Name</label>
+                          <input readonly class="form-control" name="firstName" formControlName="firstName"
+                                 id="firstName"
+                                 placeholder="First Name" type="text">
+                        </div>
+                        <div class="form-group col-md-6">
+                          <label>Last Name</label>
+                          <input readonly class="form-control" name="lastName" formControlName="lastName" id="lastName"
+                                 placeholder="Last Name" type="text">
+                        </div>
+                        <div class="form-group col-md-6">
+                          <label>Username</label>
+                          <input readonly class="form-control" name="Username" formControlName="Username" id="Username"
+                                 placeholder="Username" type="text">
+                        </div>
+                        <div class="form-group col-md-6">
+                          <label>Email</label>
+                          <input readonly class="form-control" name="managerEmail" formControlName="managerEmail"
+                                 id="managerEmail" placeholder="Email" type="text">
+                        </div>
+                        <div class="form-group col-md-6">
+                          <label>Mobile Number</label>
+                          <br>
+                          <ngx-intl-tel-input
+                            readonly
+                            [preferredCountries]="[CountryISO.UnitedStates, CountryISO.UnitedKingdom]"
+                            [enableAutoCountrySelect]="true"
+                            [enablePlaceholder]="true"
+                            [searchCountryFlag]="true"
+                            [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
+                            [selectFirstCountry]="false"
+                            [selectedCountryISO]="CountryISO.SriLanka"
+                            [maxLength]="15"
+                            [tooltipField]="TooltipLabel.Name"
+                            [phoneValidation]="true"
+                            name="managerMobileNo"
+                            formControlName="managerMobileNo"></ngx-intl-tel-input>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div bsModal [config]="{backdrop: 'static',  keyboard: false}" #resendEmailModal="bs-modal" class="modal fade screen" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg modal-dialog-centered" style="max-width: 40%;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h6 class="modal-title">Resend Email</h6>
+        <button type="button" class="close" aria-label="Close" (click)="resendEmailModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form autocomplete="off" (keydown.enter)="$event.preventDefault()" name="sendMailForm" [formGroup]="sendMailForm">
+          <div class="position-relative form-group">
+            <label for="email">Email<span style="color: red">*</span></label>
+            <input class="form-control" id="email" formControlName="email" name="email" placeholder="Email" type="text">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" (click)="resendEmailModal.hide()">Close</button>
+        <button id="finishButton" data-style="slide-down" data-spinner-size="30" (click)="sendMail()" [ladda]="isLoading" type="button" class="btn btn-success ml-auto">Send</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div *ngIf="userRole === 'ROLE_BUSINESS_PROFILE_MANAGER'" class="card card-box mb-5 screen">
+  <div class="card-header py-3">
+    <div class="card-header--title font-size-lg">
+    </div>
+    <div  class="card-header--actions">
+      <button [routerLink]="'/update-profile/'+businessProfile+'/'+businessProfileID" class="btn m-2 btn-pill btn-second" type="button">Edit
+      </button>
+    </div>
+  </div>
+  <div class="card-body">
+    <form autocomplete="off" (keydown.enter)="$event.preventDefault()" name="moreInfoForm"
+          [formGroup]="moreInfoForm">
+      <div class="modal-body">
+        <div class="card card-box mb-5">
+          <div class="card-body pt-2 px-4 pb-4">
+            <div class="form-row">
+
+              <div class="col-md-6">
+                <div class="position-relative row form-group">
+                  <label class="col-sm-3 col-form-label font-weight-bold" for="businessName">Business
+                    Name</label>
+                  <div class="col-sm-8">
+                    <input readonly class="form-control" placeholder="Business Name"
+                           formControlName="businessName" id="businessName" name="businessName" type="text">
+                  </div>
+                </div>
+                <div class="position-relative row form-group">
+                  <label class="col-sm-3 col-form-label font-weight-bold"
+                         for="regNo">Registration Number</label>
+                  <div class="col-sm-8">
+                    <input readonly class="form-control" formControlName="regNo" id="regNo" name="regNo" placeholder="Registration Number" type="text">
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="position-relative row form-group">
+                  <label class="col-sm-3 col-form-label font-weight-bold"
+                         for="exampleEmail">Email</label>
+                  <div class="col-sm-8">
+                    <input readonly class="form-control" id="exampleEmail" formControlName="email" name="email"
+                           placeholder="Email" type="text">
+                  </div>
+                </div>
+                <div class="position-relative row form-group">
+                  <label
+                    class="col-sm-3 col-form-label font-weight-bold">Telephone Number</label>
+                  <div class="col-sm-8">
+                    <ngx-intl-tel-input
+                      [preferredCountries]="[CountryISO.UnitedStates, CountryISO.UnitedKingdom]"
+                      [enableAutoCountrySelect]="false"
+                      [enablePlaceholder]="true"
+                      [searchCountryFlag]="true"
+                      disabled
+                      [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
+                      [selectFirstCountry]="false"
+                      [selectedCountryISO]="CountryISO.SriLanka"
+                      [maxLength]="15"
+                      [tooltipField]="TooltipLabel.Name"
+                      [phoneValidation]="true"
+                      name="phone"
+                      formControlName="phone"></ngx-intl-tel-input>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="position-relative row form-group">
+                  <label class="col-sm-3 col-form-label font-weight-bold"
+                         for="exampleEmail">Description</label>
+                  <textarea readonly maxlength="1000" name="profileDescription" formControlName="profileDescription" rows="6" class="form-control" id="profileDescription"
+                            placeholder="Description"></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card card-box mb-5">
+          <div class="card-header-alt p-4">
+            <h6 class="font-weight-bold font-size-lg mb-1 text-black">Head Office & Branches</h6>
+            <!--              <p class="text-black-50 mb-0">Reports for what we sold this week.</p>-->
+          </div>
+          <div class="divider"></div>
+
+          <div class="card-body pt-2 px-4 pb-4">
+          </div>
+          <div class="card-body pt-2 px-4 pb-4">
+            <div class="table-responsive">
+              <table class="table table-hover table-striped table-bordered mb-0">
+                <thead>
+                <tr>
+                  <th></th>
+                  <th>City</th>
+                  <th>Address Line 1</th>
+                  <th>Address Line 2</th>
+                  <th>Province</th>
+                  <th>Country</th>
+                  <th>Postal Code</th>
+                  <th>Time zone</th>
+                  <th>Location</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let val of branchArr">
+                  <td>{{val.type}}</td>
+                  <td>{{val.city}}</td>
+                  <td>{{val.addressLine1}}</td>
+                  <td>{{val.addressLine2}}</td>
+                  <td>{{val.province}}</td>
+                  <td>{{val.country}}</td>
+                  <td>{{val.postalCode}}</td>
+                  <td>{{val.timeZone}}</td>
+                  <td>
+                    <button (click)="viewLocation(val)" class="btn d-40 p-0 btn-pill m-2 btn-success"
+                            type="button">
+                <span class="btn-wrapper--icon">
+                     <i class="ion-ios-map"></i>
+                </span>
+                    </button>
+                  </td>
+
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group col-md-4">
+            <div class="card card-box mb-5 gallery-card">
+              <div class="card-header-alt p-4">
+                <h6 class="font-weight-bold font-size-lg mb-1 text-black">Gallery</h6>
+              </div>
+              <div class="card-body pt-2 px-4 pb-4">
+                <div class="row">
+                  <table
+                         class="table gallery-border table-hover table-striped table-bordered mb-0">
+                    <thead>
+                    <tr class="gallery-border">
+                      <th class="gallery-border"><b>Profile Images</b></th>
+                    </tr>
+                    </thead>
+                    <tbody class="gallery-border">
+                    <tr class="gallery-border">
+                      <td class="text-center gallery-border">
+                        <div class="col-lg-12">
+                          <a  class="card-img-wrapper rounded">
+                            <img  class="card-img-top rounded" *ngIf="profileImage !== null"
+                                 [src]='profileImage||"assets/images/no-image-available.png"'/>
+                            <img  class="card-img-top rounded" *ngIf="profileImage === null"
+                                 src="assets/images/no-image-available.png"/>
+                          </a>
+                        </div>
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="row">
+                  <table class="table gallery-border table-hover table-striped table-bordered mb-0">
+                    <thead>
+                    <tr class="gallery-border">
+                      <th class="gallery-border"><b>Cover Images</b></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr class="gallery-border" *ngFor="let val of imageDetailsArray">
+                      <td class="text-center gallery-border">
+                        <div class="col-lg-10">
+                          <a  class="card-img-wrapper rounded">
+                            <img  class="card-img-top rounded" *ngIf=" val!== null" [src]='val||"assets/images/no-image-available.png"'/>
+                            <img  class="card-img-top rounded" *ngIf="val === null"
+                                 src="assets/images/no-image-available.png"/>
+                          </a>
+                        </div>
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group col-md-8">
+            <h4>Bank Details</h4>
+            <hr>
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label>Account Number</label>
+                <input readonly class="form-control" name="accNumber" formControlName="accNumber"
+                       id="accNumber"
+                       placeholder="Account Number" type="text">
+              </div>
+              <div class="form-group col-md-6">
+                <label>Swift Code</label>
+                <input readonly class="form-control" name="swiftCode" formControlName="swiftCode"
+                       id="swiftCode"
+                       placeholder="Swift Code" type="text">
+              </div>
+              <div class="form-group col-md-6">
+                <label>Bank Name</label>
+                <input readonly class="form-control" name="bankName" formControlName="bankName" id="bankName"
+                       placeholder="Bank Name" type="text">
+              </div>
+              <div class="form-group col-md-6">
+                <label>Bank Code</label>
+                <input readonly class="form-control" name="bankCode" formControlName="bankCode" id="bankCode"
+                       placeholder="Bank Code" type="text">
+              </div>
+              <div class="form-group col-md-6">
+                <label>Branch</label>
+                <input readonly class="form-control" name="branch" formControlName="branch" id="branch"
+                       placeholder="Branch" type="text">
+              </div>
+              <div class="form-group col-md-6">
+                <label>Branch Code</label>
+                <input readonly class="form-control" name="brachCode" formControlName="brachCode"
+                       id="brachCode"
+                       placeholder="Branch Code" type="text">
+              </div>
+            </div>
+            <h4>Business Agreemant</h4>
+            <h5><span class="badge bg-neutral-success text-success" *ngIf="accountStatus === 'Active'">active</span>
+            <span class="badge bg-neutral-danger text-danger"
+                  *ngIf="accountStatus === 'Inactive'">inactive</span>
+            <span class="badge bg-neutral-warning text-warning"
+                  *ngIf="accountStatus !== 'Active' && accountStatus !== 'Inactive' ">{{accountStatus}}</span>
+            </h5>
+            <hr>
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label>Start Date</label>
+                <input readonly class="form-control" name="startDate" formControlName="startDate"
+                       id="startDate"
+                       placeholder="Start Date" type="text">
+              </div>
+              <div class="form-group col-md-6">
+                <label>Expire Date</label>
+                <input readonly class="form-control" name="expireDate" formControlName="expireDate"
+                       id="expireDate" placeholder="Expire Date" type="text">
+              </div>
+              <div class="form-group col-md-6">
+                <label>Model</label>
+                <input readonly class="form-control" name="model" formControlName="model" id="model"
+                       placeholder="Model" type="text">
+              </div>
+              <div id="managerSubscriptionDiv" hidden class="form-group col-md-6">
+                <label for="fee">Subscription Fee ({{currency}})</label>
+                <input readonly class="form-control" name="fee" formControlName="fee" id="fee"
+                       placeholder="Fee"
+                       type="text">
+              </div>
+              <div hidden id="managerCommissionDiv" class="form-group col-md-6">
+                <label for="commission">Commission percentage (%)</label>
+                <input readonly class="form-control" name="commission" formControlName="commission" id="commission"
+                       placeholder="Commission percentage"
+                       type="text">
+              </div>
+              <div class="form-group col-md-6">
+                <label for="agreemtDescription">Description</label>
+                <textarea readonly maxlength="1000" name="agreemtDescription"
+                          formControlName="agreemtDescription" rows="4" class="form-control"
+                          id="agreemtDescription"
+                          placeholder="Description"></textarea>
+              </div>
+              <div class="form-group col-md-6">
+                <label>View Agreement</label>
+                <br>
+                <a [href]="pdfFile" target="_blank"><img class="agreement"
+                                                         src="assets/images/pdf-2127829_640.png"></a>
+              </div>
+
+
+            </div>
+            <h4>Profile Manager Details</h4>
+            <hr>
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label>First Name</label>
+                <input readonly class="form-control" name="firstName" formControlName="firstName"
+                       id="firstName"
+                       placeholder="First Name" type="text">
+              </div>
+              <div class="form-group col-md-6">
+                <label>Last Name</label>
+                <input readonly class="form-control" name="lastName" formControlName="lastName" id="lastName"
+                       placeholder="Last Name" type="text">
+              </div>
+              <div class="form-group col-md-6">
+                <label>Username</label>
+                <input readonly class="form-control" name="Username" formControlName="Username" id="Username"
+                       placeholder="Username" type="text">
+              </div>
+              <div class="form-group col-md-6">
+                <label>Email</label>
+                <input readonly class="form-control" name="managerEmail" formControlName="managerEmail"
+                       id="managerEmail" placeholder="Email" type="text">
+              </div>
+              <div class="form-group col-md-6">
+                <label>Mobile Number</label>
+                <br>
+                <ngx-intl-tel-input
+                  readonly
+                  [preferredCountries]="[CountryISO.UnitedStates, CountryISO.UnitedKingdom]"
+                  [enableAutoCountrySelect]="true"
+                  [enablePlaceholder]="true"
+                  [searchCountryFlag]="true"
+                  [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
+                  [selectFirstCountry]="false"
+                  [selectedCountryISO]="CountryISO.SriLanka"
+                  [maxLength]="15"
+                  [tooltipField]="TooltipLabel.Name"
+                  [phoneValidation]="true"
+                  name="managerMobileNo"
+                  formControlName="managerMobileNo"></ngx-intl-tel-input>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<div bsModal [config]="{backdrop: 'static',  keyboard: false}" #AgreementModal="bs-modal" class="modal fade screen" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Renewal Agreement</h4>
+        <button type="button" class="close" aria-label="Close" (click)="AgreementModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form autocomplete="off" (keydown.enter)="$event.preventDefault()" name="renewalForm" [formGroup]="renewalForm">
+          <div class="position-relative form-group">
+            <label class="screen">Start Date</label>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                  <span class="input-group-text"><fa-icon [icon]="['far', 'calendar-alt']"
+                                                          class="mx-auto"></fa-icon></span>
+              </div>
+              <input id="newStartDate" [minDate]="maxDate" name="newStartDate"
+                     formControlName="newStartDate"
+                     [bsConfig]="{ containerClass: 'theme-primary', isAnimated: true, dateInputFormat: 'YYYY-MM-DD' }"
+                     bsDatepicker class="form-control" placeholder="Select date" type="text">
+            </div>
+          </div>
+          <div class="position-relative form-group">
+            <label class="screen">Expire Date</label>
+            <div class="input-group mb-6">
+              <div class="input-group-prepend">
+                  <span class="input-group-text"><fa-icon [icon]="['far', 'calendar-alt']"
+                                                          class="mx-auto"></fa-icon></span>
+              </div>
+              <input id="newExpireDate" [minDate]="maxDate" name="newExpireDate"
+                     formControlName="newExpireDate"
+                     [bsConfig]="{ containerClass: 'theme-primary', isAnimated: true, dateInputFormat: 'YYYY-MM-DD' }"
+                     bsDatepicker class="form-control" placeholder="Select date" type="text">
+            </div>
+          </div>
+          <div class="position-relative form-group">
+            <label>Payment Proof <span style="color: red">*</span></label>
+            <br>
+            <input id="upload" name="agreement" accept="application/pdf" formControlName="agreement" type="file" #aggrement (change)="onChangeAgreementReport(aggrement,$event)">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" (click)="AgreementModal.hide()">Close</button>
+        <button id="renewalButton"  data-style="slide-down" data-spinner-size="30" [ladda]="isLoading"  type="button" class="btn btn-success ml-auto">Renewal</button>
+      </div>
+    </div>
+  </div>
+</div>

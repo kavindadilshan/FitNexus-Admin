@@ -1,11 +1,7 @@
 const DEV_BASE_URL = "https://fitzky.ceyentra.lk/v1/";
-const PROD_BASE_URL = "https://api.fitzky.com/v1/";
-const CSV_FILE_DEV = "https://fitzky-admin.ceyentra.lk/sample_csv/users.csv";
 const PUBLIC_USER_CSV_FILE_DEV =
   "https://fitzky-admin.ceyentra.lk/sample_csv/public_users.csv";
 const CSV_FILE_PROD = "https://admin.fitzky.com/sample_csv/users.csv";
-const PUBLIC_USER_CSV_FILE_PROD =
-  "https://admin.fitzky.com/sample_csv/public_users.csv";
 const ACCESS_TOKEN = "access_token";
 const REFRESH_TOKEN = "refresh_token";
 const USER_NAME = "userName";
@@ -25,7 +21,7 @@ const BASIC_TOKEN = "Basic YWRtaW46";
 const CURRENCY = "LKR";
 
 export const constants = {
-  base_url: PROD_BASE_URL,
+  base_url: DEV_BASE_URL,
   image: IMAGE,
   user_role: USER_ROLE,
   access_token: ACCESS_TOKEN,
@@ -44,5 +40,5 @@ export const constants = {
   studio_name: STUDIO_NAME,
   currency: CURRENCY,
   csv_file: CSV_FILE_PROD,
-  public_user_csv_file: PUBLIC_USER_CSV_FILE_PROD
+  public_user_csv_file: PUBLIC_USER_CSV_FILE_DEV
 };

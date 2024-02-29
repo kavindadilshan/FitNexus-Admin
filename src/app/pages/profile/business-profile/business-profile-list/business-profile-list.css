@@ -1,0 +1,25 @@
+.td-zoom{
+  zoom: 93% !important;
+}
+.gallery-div{
+  display:block !important;;
+  border: 2px dashed  #1d1c1c !important;
+  border-radius: 5px !important;
+}
+.table-border{
+  border: none !important;
+  background: white !important;
+}
+.agreement{
+  height: 100px !important;
+  width: 120px !important;
+}
+.gallery-card{
+  display:block !important;
+  border: 2px dashed  #3C44B1 !important;
+  border-radius: 5px !important;
+}
+.gallery-border{
+  border: none !important;
+  background: white !important;
+}
