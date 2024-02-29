@@ -18,7 +18,7 @@ export class ProfileService {
 
   getProfilelist(size, page): Observable<any> {
     return this.http.get<any>(
-      constants.base_url + "admin/profile?size=" + size + "&" + "page=" + page
+      constants.base_url + "admin/profile?size=" + 250 + "&" + "page=" + page
     );
   }
 

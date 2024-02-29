@@ -1,0 +1,473 @@
+<div class="row screen">
+  <div class="col-xl-6">
+    <div class="card card-box bg-composed-wrapper bg-asteroid border-0 mb-5">
+      <div class="bg-composed-img-3 bg-composed-wrapper--image" style="background-image: url('assets/images/bg-2.jpg');"></div>
+      <div class="bg-composed-wrapper--content text-light d-flex align-items-center p-5 justify-content-between">
+        <div class="pr-2">
+          <h4 class="font-size-xl font-weight-bold mb-2">Users</h4>
+          <p class="opacity-6 font-size-md mb-0">
+            Total number of user
+          </p>
+        </div>
+        <div class="col-xl-4">
+          <div [countUp]="5" class="display-2 font-weight-bold"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-6">
+    <div class="card card-box bg-composed-wrapper bg-asteroid border-0 mb-5">
+      <div class="bg-composed-img-3 bg-composed-wrapper--image" style="background-image: url('assets/images/bg.jpg');"></div>
+      <div class="bg-composed-wrapper--content text-light d-flex align-items-center p-5 justify-content-between">
+        <div class="pr-2">
+          <h4 class="font-size-xl font-weight-bold mb-2">Enrollments</h4>
+          <p class="opacity-6 font-size-md mb-0">
+            Total number of Enrollments
+          </p>
+        </div>
+        <div class="col-xl-4">
+          <div [countUp]="35" class="display-2 font-weight-bold"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row screen">
+  <div class="form-group col-12">
+    <div class="card card-box mb-12">
+      <div class="card-header pr-2">
+        <div class="card-header--title">
+          Public Users
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="d-flex justify-content-between px-4 py-3">
+          <div class="search-wrapper">
+          <span class="icon-wrapper text-black">
+            <fa-icon [icon]="['fas', 'search']"></fa-icon>
+          </span>
+            <form autocomplete="off" (keydown.enter)="$event.preventDefault()" name="searchPackageTypeForm" [formGroup]="searchPublicUserForm">
+              <input class="form-control search-field form-control-sm rounded-pill" (search)="clear()" (keyup)="filterPublicUser()" name="search" formControlName="search" placeholder="Search terms..." type="search">
+            </form>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="table-responsive">
+          <table class="table table-hover table-striped table-bordered mb-0">
+            <thead>
+            <tr>
+              <th>Public User</th>
+<!--              <th>Created Date</th>-->
+              <th>Mobile</th>
+              <th>Status</th>
+              <th>Gender</th>
+              <th>More Info</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let val of returnedArray">
+              <td>
+                <div class="d-flex align-items-center">
+                  <div class="avatar-icon-wrapper mr-2">
+                    <div class="avatar-icon">
+                      <img  *ngIf="val.publicUserCommonDTO['image'] !== null" [src]='val.publicUserCommonDTO.image||"assets/images/no-image-available.png"'/>
+                      <img  *ngIf="val.publicUserCommonDTO['image'] === null" src="assets/images/no-image-available.png"/>
+                    </div>
+                  </div>
+                  <div>
+                    <a  class="font-weight-bold text-black" >
+                      {{val.publicUserCommonDTO.firstName+" "+val.publicUserCommonDTO.lastName}}
+                    </a>
+                  </div>
+                </div>
+
+              </td>
+<!--              <td>-->
+<!--                {{returnDate(val.publicUserCommonDTO.createdDateTime)}}-->
+<!--              </td>-->
+              <td>
+                {{val.publicUserCommonDTO.mobile}}
+              </td>
+              <td>
+                <span class="badge bg-neutral-success text-success" *ngIf="val.publicUserCommonDTO['status'] === 'ACTIVE'">active</span>
+                <span class="badge bg-neutral-success text-danger" *ngIf="val.publicUserCommonDTO['status'] === 'INACTIVE'">inactive</span>
+                <span class="badge bg-neutral-success text-warning" *ngIf="val.publicUserCommonDTO['status'] !== 'ACTIVE' && val.publicUserCommonDTO['status'] !== 'INACTIVE' ">{{val.publicUserCommonDTO.status}}</span>
+              </td>
+              <td>
+                <span class="badge bg-neutral-success " style="color: #4facfe" *ngIf="val.publicUserCommonDTO['gender'] === 'MALE'">male</span>
+                <span class="badge bg-neutral-success " style="color: #1e3c72" *ngIf="val.publicUserCommonDTO['gender'] === 'FEMALE'">female</span>
+              </td>
+              <td style="zoom: 93%;" class="text-center">
+                <button (click)="moreInfo(val)" class="btn m-2 btn-pill btn-first" type="button">View</button>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card-footer py-3 d-flex justify-content-between">
+          <pagination *ngIf="totalElement > 10" [boundaryLinks]="true"
+                       [rotate]="false"
+                       (pageChanged)="pageChanged($event)"
+                       [itemsPerPage]="size"
+                       [maxSize]="3"
+                       [totalItems]="totalElement"  class="pagination-icons pagination-second"></pagination>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</div>
+
+<!--<div class="row">-->
+<!--  <div class="form-group col-12">-->
+<!--    <div class="card card-box mb-12">-->
+<!--      <div class="card-header pr-2 screen">-->
+<!--        <div class="card-header&#45;&#45;title">-->
+<!--          Enrollments for online class-->
+<!--        </div>-->
+<!--      </div>-->
+<!--      <div class="card-body">-->
+<!--        <div class="form-group col-12">-->
+<!--          <div class="col-xl-12">-->
+<!--            <div class="card card-box mb-5">-->
+<!--              <div class="d-block p-4">-->
+<!--                <form autocomplete="off" (keydown.enter)="$event.preventDefault()" name="enrollmentForm" [formGroup]="enrollmentForm">-->
+<!--                <div class="form-row">-->
+<!--                  <div class="form-group col-md-5">-->
+<!--                    <label class="screen">Start Date:</label>-->
+<!--                    <div class="input-group input-group-lg mb-5">-->
+<!--                      <input (keydown)="eventHandler($event)" name="fromDate" formControlName="fromDate" #dp1="bsDatepicker" [bsConfig]="bsConfig" bsDatepicker class="form-control" placeholder="Select date" type="text">-->
+<!--                      <div class="input-group-append">-->
+<!--                        <button (click)="dp1.toggle()" [attr.aria-expanded]="dp1.isOpen" class="btn btn-primary py-0">-->
+<!--                          <fa-icon [icon]="['far', 'calendar-alt']" class="font-size-lg"></fa-icon>-->
+<!--                        </button>-->
+<!--                      </div>-->
+<!--                    </div>-->
+<!--                  </div>-->
+<!--                  <div class="form-group col-md-5">-->
+<!--                    <label class="screen">End Date:</label>-->
+<!--                    <div class="input-group input-group-lg mb-5">-->
+<!--                      <input (keydown)="eventHandler($event)" name="toDate" formControlName="toDate" #dp="bsDatepicker" [bsConfig]="bsConfig"  bsDatepicker class="form-control" placeholder="Select date" type="text">-->
+<!--                      <div class="input-group-append">-->
+<!--                        <button (click)="dp.toggle()" [attr.aria-expanded]="dp.isOpen" class="btn btn-primary py-0">-->
+<!--                          <fa-icon [icon]="['far', 'calendar-alt']" class="font-size-lg"></fa-icon>-->
+<!--                        </button>-->
+<!--                      </div>-->
+<!--                    </div>-->
+<!--                  </div>-->
+
+<!--                  <div style="padding: 35px" class="form-group col-md-2">-->
+<!--                  <button (click)="getEnrollmentProgress()" class="btn btn-success" type="button">Filter</button>-->
+<!--                  </div>-->
+<!--                </div>-->
+<!--                </form>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--          <div class="col-xl-12 screen">-->
+<!--            <div class="card card-box mb-5">-->
+<!--              <div class="d-block p-4">-->
+<!--                <h6 class="text-uppercase font-weight-bold mb-1 text-black">Class Session Enrolls</h6>-->
+<!--                <apx-chart-->
+<!--                  [chart]="{-->
+<!--                                type: 'line',-->
+<!--                                height: '375'-->
+<!--                            }"-->
+<!--                  [colors]="['#0abcce', '#060918']"-->
+<!--                  [grid]="{-->
+<!--                    strokeDashArray: '5',-->
+<!--                    borderColor: 'rgba(125, 138, 156, 0.3)'-->
+<!--                }"-->
+<!--                  [labels]="-->
+<!--                  date-->
+<!--                "-->
+<!--                  [series]="[-->
+<!--                    {-->
+<!--                      name: 'Class Session Enrollments',-->
+<!--                      type: 'column',-->
+<!--                      data: classSessionEnrolls-->
+<!--                    }-->
+<!--                  ]"-->
+<!--                  [stroke]="{-->
+<!--                    curve: 'smooth',-->
+<!--                    width: [0, 4]-->
+<!--                  }"-->
+
+<!--                  [xaxis]="{-->
+<!--                type: 'datetime'-->
+<!--        }"-->
+<!--                ></apx-chart>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--          <div hidden class="col-xl-12 screen">-->
+<!--            <div class="card card-box mb-5">-->
+<!--              <div class="d-block p-4">-->
+<!--                <h6 class="text-uppercase font-weight-bold mb-1 text-black">Personal Session Enrolls</h6>-->
+<!--                <apx-chart-->
+<!--                  [chart]="{-->
+<!--                                type: 'line',-->
+<!--                                height: '375'-->
+<!--                            }"-->
+<!--                  [colors]="['#9b59b6', '#060918']"-->
+<!--                  [grid]="{-->
+<!--                    strokeDashArray: '5',-->
+<!--                    borderColor: 'rgba(125, 138, 156, 0.3)'-->
+<!--                }"-->
+<!--                  [labels]="-->
+<!--                  date-->
+<!--                "-->
+<!--                  [series]="[-->
+<!--                    {-->
+<!--                      name: 'Persoanl Session Enrollments',-->
+<!--                      type: 'column',-->
+<!--                      data: personalSessionEnrolls-->
+<!--                    }-->
+<!--                  ]"-->
+<!--                  [stroke]="{-->
+<!--                    curve: 'smooth',-->
+<!--                    width: [0, 4]-->
+<!--                  }"-->
+
+<!--                  [xaxis]="{-->
+<!--                type: 'datetime'-->
+<!--        }"-->
+<!--                ></apx-chart>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->
+
+
+
+
+<!--</div>-->
+<div bsModal #moreInfoModal="bs-modal" class="modal fade screen" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content border-0 bg-transparent">
+      <div class="row no-gutters">
+        <div class="col-lg-12">
+          <div class="bg-white rounded-left rounded-right">
+            <div class="modal-header">
+              <button type="button" class="close" aria-label="Close" (click)="moreInfoModal.hide()">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form autocomplete="off" (keydown.enter)="$event.preventDefault()" name="moreInfoForm" [formGroup]="moreInfoForm">
+              <div class="card card-box mb-5">
+                <div class="card-header-alt p-4">
+                  <h6 class="font-weight-bold font-size-lg mb-1 text-black">Personal Details</h6>
+                </div>
+                <div class="divider"></div>
+                <div class="card-body pt-2 px-4 pb-4">
+                  <div class="form-row">
+                    <div class="col-md-6">
+                      <div class="position-relative row form-group">
+                        <label class="col-sm-3 col-form-label font-weight-bold" for="firstName">First Name</label>
+                        <div class="col-sm-8">
+                          <input readonly class="form-control" formControlName="firstName" id="firstName" name="firstName"
+                                 placeholder="First Name" type="text"></div>
+                      </div>
+                      <div class="position-relative row form-group"><label class="col-sm-3 col-form-label font-weight-bold"
+                                                                           for="email">Email</label>
+                        <div class="col-sm-8"><input readonly class="form-control" formControlName="email" id="email" name="email"
+                                                     placeholder="Email" type="text"></div>
+                      </div>
+                      <div class="position-relative row form-group">
+                        <label class="col-sm-3 col-form-label font-weight-bold"
+                               for="dob">Date of Birth</label>
+                        <div class="col-sm-8">
+                          <input readonly formControlName="dob" class="form-control" id="dob" name="dob"
+                                 placeholder="Date of Birth" type="text"></div>
+                      </div>
+                      <div class="position-relative row form-group">
+                        <label class="col-sm-3 col-form-label font-weight-bold">Profile Image</label>
+                        <div class="col-sm-8">
+                          <div class="d-flex flex-column flex-sm-row align-items-start">
+                            <div>
+                              <div class="card card-transparent mb-3 mb-sm-0">
+                                <a  class="card-img-wrapper rounded">
+                                  <div class="img-wrapper-overlay">
+                                    <div class="overlay-btn-wrapper">
+                                    </div>
+                                  </div>
+                                  <img  class="card-img-top rounded" id="profileImage"
+                                       src="assets/images/no-image-available.png" style="object-fit: cover;width: 250px;height: 200px">
+                                </a>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="position-relative row form-group"><label class="col-sm-4 col-form-label font-weight-bold"
+                                                                           for="lastName">Last Name</label>
+                        <div class="col-sm-8"><input readonly class="form-control" formControlName="lastName" id="lastName" name="lastName"
+                                                     placeholder="Last Name" type="text"></div>
+                      </div>
+                      <div class="position-relative row form-group"><label class="col-sm-4 col-form-label font-weight-bold"
+                                                                           for="mobileNo">Mobile Number</label>
+                        <div class="col-sm-8"><input readonly class="form-control" formControlName="mobileNo" id="mobileNo" name="mobileNo"
+                                                     placeholder="Mobile Number" type="text"></div>
+                      </div>
+                      <div class="position-relative row form-group"><label class="col-sm-4 col-form-label font-weight-bold"
+                                                                           for="gender">Gender</label>
+                        <div class="col-sm-8"><input readonly class="form-control" formControlName="gender" id="gender" name="gender"
+                                                     placeholder="Gender" type="text"></div>
+                      </div>
+                      <div class="position-relative row form-group"><label class="col-sm-4 col-form-label font-weight-bold"
+                                                                           for="height">Height (cm)</label>
+                        <div class="col-sm-8"><input readonly class="form-control" formControlName="height" id="height" name="height"
+                                                     placeholder="Height(cm)" type="text"></div>
+                      </div>
+                      <div class="position-relative row form-group"><label class="col-sm-4 col-form-label font-weight-bold"
+                                                                           for="weight">Weight (kg)</label>
+                        <div class="col-sm-8"><input readonly class="form-control" formControlName="weight" id="weight" name="weight"
+                                                     placeholder="Weight (kg)" type="text"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              </form>
+<!--              <div class="card card-box mb-5">-->
+<!--                <div class="card-header-alt p-4">-->
+<!--                  <h6 class="font-weight-bold font-size-lg mb-1 text-black">Public User Analytics</h6>-->
+<!--                </div>-->
+<!--                <div class="divider"></div>-->
+<!--                <div class="card-body pt-2 px-4 pb-4">-->
+<!--                  <div class="table-responsive">-->
+<!--                    <table class="table table-hover table-striped table-bordered mb-0">-->
+<!--                      <thead>-->
+<!--                      <tr>-->
+<!--                        <th>App Type</th>-->
+<!--                        <th>Date & Time</th>-->
+<!--                        <th>Event Type</th>-->
+<!--                        <th>Selected Event</th>-->
+<!--                      </tr>-->
+<!--                      </thead>-->
+<!--                      <tbody>-->
+<!--                      <tr>-->
+<!--                        <td>{{appType}}</td>-->
+<!--                        <td>{{returnDateTime(dateTime)}}</td>-->
+<!--                        <td>{{eventType}}</td>-->
+<!--                        <td>{{selectedEvent}}</td>-->
+<!--                      </tr>-->
+<!--                      </tbody>-->
+<!--                    </table>-->
+<!--                  </div>-->
+<!--                </div>-->
+<!--              </div>-->
+
+<!--              <div class="card card-box mb-5">-->
+<!--                <div class="card-header-alt p-4">-->
+<!--                  <h6 class="font-weight-bold font-size-lg mb-1 text-black">Subscription Package Enrollments</h6>-->
+<!--                </div>-->
+<!--                <div class="divider"></div>-->
+<!--                <div class="card-body pt-2 px-4 pb-4">-->
+<!--                  <div class="table-responsive">-->
+<!--                    <table class="table table-hover table-striped table-bordered mb-0">-->
+<!--                      <thead>-->
+<!--                      <tr>-->
+<!--                        <th style="width: 10%">Start Date</th>-->
+<!--                        <th style="width: 10%">Next Billing Date</th>-->
+<!--                        <th>Status</th>-->
+<!--                        <th>Card Type</th>-->
+<!--                        <th>Card Holder Name</th>-->
+<!--                        <th>Card Number</th>-->
+<!--                        <th>Card Expiry</th>-->
+<!--                        <th>Enroll Classes</th>-->
+<!--                      </tr>-->
+<!--                      </thead>-->
+<!--                      <tbody>-->
+<!--                      <tr *ngFor="let val of subscriptionEnrollmentReturnedArray">-->
+<!--                        <td>{{returnDate(val.subscriptionDetails.startDate)}}</td>-->
+<!--                        <td>{{returnDate(val.subscriptionDetails.nextBillingDate)}}</td>-->
+<!--                        <td>-->
+<!--                          <span class="badge bg-neutral-success text-success" *ngIf="val.subscriptionDetails['status'] === 'ACTIVE'">Active</span>-->
+<!--                          <span class="badge bg-neutral-danger text-danger"-->
+<!--                                *ngIf="val.subscriptionDetails['status'] === 'INACTIVE'">Inactive</span>-->
+<!--                          </td>-->
+<!--                        <td>{{val.subscriptionDetails.cardBrand}}</td>-->
+<!--                        <td>{{val.subscriptionDetails.cardHolderName}}</td>-->
+<!--                        <td>{{val.subscriptionDetails.cardNumber}}</td>-->
+<!--                        <td>{{val.subscriptionDetails.cardExpiry}}</td>-->
+<!--                        <td>{{returnClassNameList(val.classDetails)}}</td>-->
+<!--                      </tr>-->
+<!--                      </tbody>-->
+<!--                    </table>-->
+<!--                  </div>-->
+<!--                  <div class="card-footer py-3 d-flex justify-content-between">-->
+<!--                    <pagination *ngIf="subscriptionEnrollmentTotalElement > 5" [boundaryLinks]="true"-->
+<!--                                [rotate]="false"-->
+<!--                                (pageChanged)="subscriptionPackageEnrollmentPageChange($event)"-->
+<!--                                [itemsPerPage]="5"-->
+<!--                                [maxSize]="3"-->
+<!--                                [totalItems]="subscriptionEnrollmentTotalElement"  class="pagination-icons pagination-second"></pagination>-->
+<!--                  </div>-->
+<!--                </div>-->
+<!--              </div>-->
+
+              <div class="card card-box mb-5">
+                <div class="card-header-alt p-4">
+                  <h6 class="font-weight-bold font-size-lg mb-1 text-black">Gym Membership Enrollments</h6>
+                </div>
+                <div class="divider"></div>
+                <div class="card-body pt-2 px-4 pb-4">
+                  <div class="table-responsive">
+                    <table class="table table-hover table-striped table-bordered mb-0">
+                      <thead>
+                      <tr>
+                        <th>Business Profile</th>
+                        <th>Gym</th>
+                        <th>Membership</th>
+                        <th>Type</th>
+                        <th style="width: 10%">Enroll Date</th>
+                        <th style="width: 10%">Expire Date</th>
+                        <th>Paid Amount ({{currency}})</th>
+                        <th>Payment Status</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      <tr *ngFor="let val of gymMembershipReturnedArray">
+                        <td>{{val.businessProfileName}}</td>
+                        <td>{{val.gymName}}</td>
+                        <td>{{val.membershipName}}</td>
+                        <td>{{val.membershipType}}</td>
+                        <td>{{returnDate(val.enrollDateTime)}}</td>
+                        <td>{{returnDate(val.expireDateTime)}}</td>
+                        <td>{{val.paidAmount}}</td>
+                        <td>{{val.paymentStatus}}</td>
+                      </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="card-footer py-3 d-flex justify-content-between">
+                    <pagination *ngIf="gymMembershipTotalElement > 5" [boundaryLinks]="true"
+                                 [rotate]="false"
+                                 (pageChanged)="gymMembershipEnrollmentPageChange($event)"
+                                 [itemsPerPage]="5"
+                                 [maxSize]="3"
+                                 [totalItems]="gymMembershipTotalElement"  class="pagination-icons pagination-second"></pagination>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
