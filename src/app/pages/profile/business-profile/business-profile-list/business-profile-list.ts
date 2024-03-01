@@ -332,7 +332,7 @@ export class BusinessProfileList {
     this.profileService.getProfilelist(size, page).subscribe(
       res => {
         if (res.success) {
-          this.returnedArray = res.body.content;
+          this.returnedArray = res.body.content.filter(item => item.accountStatus !== 'Inactive');
           this.profileManagerDetails(this.returnedArray);
         } else {
           this.notifier.notify("danger", res.message);
@@ -368,8 +368,8 @@ export class BusinessProfileList {
     this.profileService.getProfilelist(size, page).subscribe(
       res => {
         if (res.success) {
-          this.totalElement = res.body.totalElements;
-          this.returnedArray = res.body.content;
+          this.totalElement = 1;
+          this.returnedArray = res.body.content.filter(item => item.accountStatus !== 'Inactive');
           this.currentPage = Number(page) + 1;
         } else {
           this.notifier.notify("danger", res.message);
@@ -384,8 +384,8 @@ export class BusinessProfileList {
     this.profileService.getProfilelist(size, page).subscribe(
       res => {
         if (res.success) {
-          this.totalElement = res.body.totalElements;
-          this.returnedArray = res.body.content;
+          this.totalElement = 1;
+          this.returnedArray = res.body.content.filter(item => item.accountStatus !== 'Inactive');
         } else {
           this.notifier.notify("danger", res.message);
         }

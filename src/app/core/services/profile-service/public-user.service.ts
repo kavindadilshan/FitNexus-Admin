@@ -17,7 +17,7 @@ export class PublicUserService {
 
   getAllPublicUsers(size, page): Observable<any> {
     return this.http.get<any>(
-      constants.base_url + "admin/public/user?size=" + size + "&page=" + page
+      constants.base_url + "admin/public/user?size=" + 500 + "&page=" + page
     );
   }
 

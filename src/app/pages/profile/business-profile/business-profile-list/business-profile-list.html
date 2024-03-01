@@ -81,10 +81,10 @@
                     (click)="editBusinessProfileRoute(val.businessName,val.id)"
                     class="btn m-2 btn-pill btn-second" type="button">Edit
             </button>
-            <button (click)="deactivateProfile(val)"
-                    *ngIf="val['accountStatus'] === 'Active' || val['accountStatus'] !== 'Inactive' && userRole === 'ROLE_SUPER_ADMIN'"
-                    class="btn m-2 btn-pill btn-danger" type="button">Deactivate
-            </button>
+<!--            <button (click)="deactivateProfile(val)"-->
+<!--                    *ngIf="val['accountStatus'] === 'Active' || val['accountStatus'] !== 'Inactive' && userRole === 'ROLE_SUPER_ADMIN'"-->
+<!--                    class="btn m-2 btn-pill btn-danger" type="button">Deactivate-->
+<!--            </button>-->
             <button *ngIf="val['accountStatus'] === 'Inactive' && userRole === 'ROLE_SUPER_ADMIN'"
                     (click)="activateProfile(val)" class="btn m-2 btn-pill btn-success"
                     type="button">Activate

@@ -218,8 +218,14 @@ export class PublicUserProfileReport {
     this.publicUserService.getAllPublicUsers(size, page).subscribe(
       res => {
         if (res.success) {
-          this.totalElement = res.body.totalElements;
-          this.returnedArray = res.body.content;
+          this.totalElement = 1;
+
+          this.returnedArray = res.body.content.filter(item => {
+            const lastSeenYear = new Date(item.publicUserCommonDTO.lastSeenDateTime).getFullYear();
+            const isNotReshan = item.publicUserCommonDTO.firstName !== 'Reshan';
+            return lastSeenYear === 2024 && isNotReshan;
+          });
+
         } else {
           this.notifier.notify("danger", res.message);
         }
